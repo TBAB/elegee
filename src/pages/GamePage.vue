@@ -77,7 +77,7 @@
       </div>
     </div>
     <!-- 槽位 -->
-    <div v-if="slotAreaVal.length > 0" align="center" class="slot-board">
+    <div v-if="slotAreaVal.length > 0" class="slot-board">
       <div
         v-for="(slotBlock, index) in slotAreaVal"
         :key="index"
@@ -155,11 +155,12 @@ onMounted(() => {
   justify-content: center;
   align-items: center;
   background: url("../assets/bg-bar.png") no-repeat;
-  background-size: cover;
-  height: 70px;
-  /* width: 260px; */
-  margin: 16px auto;
-  width: fit-content;
+  background-size: contain;
+  height: 80px;
+  width: 330px;
+  /* margin: 0px; */
+  /* margin-right: 0px; */
+  /* width: fit-content; */
 }
 
 .skill-board {
