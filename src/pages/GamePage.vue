@@ -1,13 +1,15 @@
 <template>
   <div id="gamePage">
     <div class="display-flex">
-      <div class="flex-1" @click="doBack">返回</div>
-      <div class="flex-1 text-right">
+      <div class="flex-1 text-white" @click="doBack">返回</div>
+      <div class="flex-1 text-right text-white">
         块数：{{ clearBlockNum }} / {{ totalBlockNum }}
       </div>
     </div>
+    <!-- 技能 -->
+    <div class="skill-board" @click="goldenFinger"></div>
     <!-- 胜利 -->
-    <div align="center">
+    <div>
       <div v-if="gameStatus === 3" style="text-align: center">
         <h2>恭喜，你赢啦！🎉</h2>
         <!-- <img alt="程序员鱼皮" src="../assets/kunkun.png" /> -->
@@ -28,10 +30,11 @@
               zIndex: 100 + block.level,
               left: block.x * widthUnit + 'px',
               top: block.y * heightUnit + 'px',
+              backgroundImage: 'url(' + inlineBgImage(block.type) + ')',
             }"
             @click="() => doClickBlock(block)"
           >
-            {{ block.type }}
+            <!-- <img class="block-img" :src="inlineBgImage(block.type)" alt="" /> -->
           </div>
         </div>
       </div>
@@ -47,31 +50,45 @@
           v-if="randomBlock.length > 0"
           :data-id="randomBlock[0].id"
           class="block"
+          :style="{
+            backgroundImage: 'url(' + inlineBgImage(randomBlock[0].type) + ')',
+            zIndex: 100,
+          }"
           @click="() => doClickBlock(randomBlock[0], index)"
         >
-          {{ randomBlock[0].type }}
+          <!-- {{ randomBlock[0].type }} -->
         </div>
         <!-- 隐藏 -->
         <div
           v-for="num in Math.max(randomBlock.length - 1, 0)"
           :key="num"
-          class="block disabled"
+          class="block random-disabled"
+          :style="{
+            zIndex: 100 - num,
+          }"
         >
-          <span v-if="canSeeRandom">
-            {{ randomBlock[num].type }}
-          </span>
+          <!-- {{ randomBlock[num].type }} -->
+          <!-- <img
+            v-if=""
+            class="block-img"
+            :src="inlineBgImage(randomBlock[num].type)"
+            alt=""
+          /> -->
         </div>
       </div>
     </div>
     <!-- 槽位 -->
     <div v-if="slotAreaVal.length > 0" align="center" class="slot-board">
-      <div v-for="(slotBlock, index) in slotAreaVal" :key="index" class="block">
-        {{ slotBlock?.type }}
+      <div
+        v-for="(slotBlock, index) in slotAreaVal"
+        :key="index"
+        class="block"
+        :style="{
+          backgroundImage: 'url(' + inlineBgImage(slotBlock?.type) + ')',
+        }"
+      >
+        <!-- {{ slotBlock?.type }} -->
       </div>
-    </div>
-    <!-- 技能 -->
-    <div class="skill-board">
-      <div class="flex-1" @click="doBroke">一键通关</div>
     </div>
   </div>
 </template>
@@ -96,7 +113,8 @@ const {
   canSeeRandom,
   doClickBlock,
   doStart,
-  doBroke,
+  goldenFinger,
+  inlineBgImage,
 } = useGame();
 
 /**
@@ -112,9 +130,12 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.text-white {
+  color: #fff;
+}
 .level-board {
   position: relative;
-  margin: 20px auto;
+  margin: 80px auto 20px;
 }
 
 .level-block {
@@ -132,14 +153,24 @@ onMounted(() => {
 }
 
 .slot-board {
-  border: 10px solid saddlebrown;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: url("../assets/bg-bar.png") no-repeat;
+  background-size: cover;
+  height: 70px;
+  /* width: 260px; */
   margin: 16px auto;
   width: fit-content;
 }
 
 .skill-board {
-  display: flex;
-  text-align: center;
+  width: 80px;
+  height: 80px;
+  background: url("../assets/icon-magic.png") no-repeat;
+  background-size: cover;
+  position: absolute;
+  right: 10px;
 }
 .display-flex {
   display: flex;
@@ -154,19 +185,27 @@ onMounted(() => {
 
 .block {
   font-size: 28px;
-  width: 42px;
-  height: 42px;
-  line-height: 42px;
-  min-width: 42px;
-  border: 1px solid #eee;
-  background: white;
+  width: 44px;
+  height: 44px;
+  line-height: 44px;
+  min-width: 44px;
+  /* background: white; */
   text-align: center;
   vertical-align: top;
   display: inline-block;
+  background-size: cover;
 }
 
 .disabled {
-  background: grey;
+  /* background: grey;
   cursor: not-allowed;
+  border-radius: 5px; */
+  opacity: 0.5;
+}
+.random-disabled {
+  opacity: 0.8;
+  background: url("../assets/icon-hidden.png") no-repeat;
+  background-size: cover;
+  margin-left: -15px;
 }
 </style>

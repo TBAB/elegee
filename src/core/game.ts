@@ -22,7 +22,7 @@ const useGame = () => {
   const slotAreaVal = ref<BlockType[]>([]);
   // 当前槽占用数
   const currSlotNum = ref(0);
-  // 当前槽占用数
+  // 爆破次数
   const doRemoveNum = ref(0);
 
   // 保存所有块（包括随机块）
@@ -133,7 +133,6 @@ const useGame = () => {
     }
     // 打乱数组
     const randomAnimalBlocks = _.shuffle(animalBlocks);
-
     // 初始化
     for (let i = 0; i < totalBlockNum.value; i++) {
       const newBlock = {
@@ -366,8 +365,8 @@ const useGame = () => {
     if (tempSlotNum >= gameConfig.slotNum) {
       gameStatus.value = 2;
       setTimeout(() => {
-        alert("你输了");
-      }, 2000);
+        alert("马失前蹄，请重新来过");
+      }, 1000);
     }
     if (clearBlockNum.value >= totalBlockNum.value) {
       gameStatus.value = 3;
@@ -394,7 +393,7 @@ const useGame = () => {
    *
    * @desc 消除一组层级块
    */
-  const doBroke = () => {
+  const goldenFinger = () => {
     // 非可游戏状态，中断
     if (gameStatus.value !== 1) {
       return;
@@ -426,13 +425,8 @@ const useGame = () => {
     // console.log(blocks, tempSlotAreaVal);
     // 边界
     if (tempSlotAreaVal?.length > gameConfig.slotNum - 2) {
-      // for (let i = 0; i < doRemoveNum.value; i++) {
-      //   doRemove();
-      // }
-      doRemove();
-      doRemove();
-      doRemove();
-      // doRemoveNum.value++;
+      doRemove(3 + doRemoveNum.value);
+      doRemoveNum.value++;
       reBroke();
       return;
     }
@@ -495,36 +489,42 @@ const useGame = () => {
    */
   const reBroke = () => {
     setTimeout(() => {
-      doBroke();
+      goldenFinger();
     }, reBrokeTime);
   };
 
   /**
    * 移出块
    */
-  const doRemove = () => {
-    // 移除第一个块
-    const block = slotAreaVal.value[0];
-    if (!block) {
-      return;
-    }
-    // 槽移除块
-    for (let i = 0; i < slotAreaVal.value.length - 1; i++) {
-      slotAreaVal.value[i] = slotAreaVal.value[i + 1];
-    }
-    // @ts-ignore
-    slotAreaVal.value[slotAreaVal.value.length - 1] = null;
-    // 改变新块的坐标
-    block.x = Math.floor(Math.random() * (boxWidthNum - 2));
-    block.y = boxHeightNum - 2;
-    block.status = 0;
-    // 移除的是随机块的元素，移到层级区域
-    if (block.level < 1) {
-      block.level = 10000;
-      levelBlocksVal.value.push(block);
+  const doRemove = (num = 1) => {
+    while (num > 0) {
+      // 移除第一个块
+      const block = slotAreaVal.value[0];
+      if (!block) {
+        return;
+      }
+      // 槽移除块
+      for (let i = 0; i < slotAreaVal.value.length - 1; i++) {
+        slotAreaVal.value[i] = slotAreaVal.value[i + 1];
+      }
+      // @ts-ignore
+      slotAreaVal.value[slotAreaVal.value.length - 1] = null;
+      // 改变新块的坐标
+      block.x = Math.floor(Math.random() * (boxWidthNum - 2));
+      block.y = Math.floor(Math.random() * (boxHeightNum - 2));
+      block.status = 0;
+      // 移除的是随机块的元素，移到层级区域
+      if (block.level < 1) {
+        block.level = 10000;
+        levelBlocksVal.value.push(block);
+      }
+      num--;
     }
   };
 
+  const inlineBgImage = (src: string) => {
+    return new URL(`../assets/${src}.png`, import.meta.url).href;
+  };
   // endregion
 
   return {
@@ -542,7 +542,8 @@ const useGame = () => {
     canSeeRandom,
     doClickBlock,
     doStart,
-    doBroke,
+    goldenFinger,
+    inlineBgImage,
   };
 };
 

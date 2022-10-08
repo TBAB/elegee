@@ -1,28 +1,8 @@
-// 动物数组
-const animals = [
-  "🐔",
-  "🐟",
-  "🦆",
-  "🐶",
-  "🐱",
-  "🐴",
-  "🐑",
-  "🐦",
-  "🐧",
-  "🐊",
-  "🐺",
-  "🐒",
-  "🐳",
-  "🐬",
-  "🐢",
-  "🦖",
-  "🦒",
-  "🦁",
-  "🐍",
-  "🐭",
-  "🐂",
-];
-
+// 企鹅icon数组
+const animals = [];
+for (let i = 1; i <= 18; i++) {
+  animals.push(`icon-${i}`);
+}
 export const defaultGameConfig: GameConfigType = {
   // 槽容量
   slotNum: 7,
@@ -74,7 +54,7 @@ export const yangGameConfig: GameConfigType = {
   // 动物类别数
   typeNum: 8,
   // 每层块数（大致）
-  levelBlockNum: 8,
+  levelBlockNum: 12,
   // 边界收缩步长
   borderStep: 3,
   // 总层数（最小为 2）

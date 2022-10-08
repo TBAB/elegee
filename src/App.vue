@@ -7,11 +7,17 @@
 </template>
 <script setup lang="ts"></script>
 <style scoped>
+html {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-size: 14px;
+}
 #app {
-  background: url("assets/bg.jpeg");
+  background: url("assets/bg.png") no-repeat;
   padding: 16px 16px 50px;
-  min-height: 100vh;
-  background-size: 100% 100%;
+  height: 100vh;
+  background-size: cover;
 }
 
 .content {

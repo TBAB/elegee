@@ -7,14 +7,14 @@
       style="margin-bottom: 16px"
       @click="toGamePage(easyGameConfig)"
     >
-      简单模式
+      我是小鹅
     </button>
     <button
       block
       style="margin-bottom: 16px"
       @click="toGamePage(yangGameConfig)"
     >
-      羊了个羊模式
+      在下老鹅
     </button>
   </div>
 </template>

@@ -7,6 +7,7 @@ interface BlockType {
   y: number;
   level: number;
   type: string;
+  imgSrc: string;
   // 0 - 正常, 1 - 已点击, 2 - 已消除
   status: 0 | 1 | 2;
   // 压住的其他块
