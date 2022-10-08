@@ -1,8 +1,7 @@
 <template>
   <div id="gamePage">
     <div class="display-flex">
-      <div class="flex-1 text-white" @click="doBack">返回</div>
-      <div class="flex-1 text-right text-white">
+      <div class="flex-1 text-white">
         块数：{{ clearBlockNum }} / {{ totalBlockNum }}
       </div>
     </div>
@@ -12,7 +11,7 @@
     <div>
       <div v-if="gameStatus === 3" style="text-align: center">
         <h2>恭喜，你赢啦！🎉</h2>
-        <!-- <img alt="程序员鱼皮" src="../assets/kunkun.png" /> -->
+        <h3 @click="reload">再来一局</h3>
       </div>
     </div>
     <!-- 分层选块 -->
@@ -114,16 +113,15 @@ const {
   doClickBlock,
   doStart,
   goldenFinger,
-  inlineBgImage,
+  reload,
 } = useGame();
 
 /**
- * 回上一页
+ * 获取图片背景
  */
-const doBack = () => {
-  router.back();
+const inlineBgImage = (src: string) => {
+  return new URL(`../assets/${src}.png`, import.meta.url).href;
 };
-
 onMounted(() => {
   doStart();
 });
@@ -171,6 +169,7 @@ onMounted(() => {
   background-size: cover;
   position: absolute;
   right: 10px;
+  top: 20px;
 }
 .display-flex {
   display: flex;

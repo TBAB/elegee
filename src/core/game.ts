@@ -39,7 +39,7 @@ const useGame = () => {
   const boxWidthNum = 24;
   const boxHeightNum = 24;
 
-  const reBrokeTime = 100;
+  const reBrokeTime = 120;
 
   // 每个格子的宽高
   const widthUnit = 14;
@@ -208,6 +208,7 @@ const useGame = () => {
 
     // 4. 初始化空插槽
     const slotArea: BlockType[] = new Array(gameConfig.slotNum).fill(null);
+    console.log("块情况", levelBlocks);
     console.log("随机块情况", randomBlocks);
 
     return {
@@ -373,6 +374,7 @@ const useGame = () => {
     }
     if (clearBlockNum.value >= totalBlockNum.value) {
       gameStatus.value = 3;
+      broked = !broked;
     }
   };
 
@@ -539,11 +541,12 @@ const useGame = () => {
     }
   };
 
-  const inlineBgImage = (src: string) => {
-    return new URL(`../assets/${src}.png`, import.meta.url).href;
+  /**
+   * 再来一局
+   */
+  const reload = () => {
+    window.location.reload();
   };
-  // endregion
-
   return {
     gameStatus,
     levelBlocksVal,
@@ -560,7 +563,7 @@ const useGame = () => {
     doClickBlock,
     doStart,
     goldenFinger,
-    inlineBgImage,
+    reload,
   };
 };
 
