@@ -158,7 +158,7 @@ onMounted(() => {
   background-size: contain;
   height: 80px;
   width: 330px;
-  /* margin: 0px; */
+  margin: 10px auto;
   /* margin-right: 0px; */
   /* width: fit-content; */
 }
