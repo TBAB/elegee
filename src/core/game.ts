@@ -45,6 +45,9 @@ const useGame = () => {
   const widthUnit = 14;
   const heightUnit = 14;
 
+  //  正在执行金手指
+  let broked = false;
+
   // 保存整个 "棋盘" 的每个格子状态（下标为格子起始点横纵坐标）
   let chessBoard: ChessBoardUnitType[][] = [];
 
@@ -393,6 +396,20 @@ const useGame = () => {
    * @desc 消除一组层级块
    */
   const goldenFinger = () => {
+    if (broked) {
+      return;
+    }
+    broked = !broked;
+    // 开始爆破
+    doBroke();
+  };
+
+  /**
+   * 一键通关
+   *
+   * @desc 消除一组层级块
+   */
+  const doBroke = () => {
     // 非可游戏状态，中断
     if (gameStatus.value !== 1) {
       return;
@@ -424,7 +441,8 @@ const useGame = () => {
     // console.log(blocks, tempSlotAreaVal);
     // 边界
     if (tempSlotAreaVal?.length > gameConfig.slotNum - 2) {
-      doRemove(3 + doRemoveNum.value);
+      doRemove(1 + doRemoveNum.value);
+      // 逐步增加爆破数量
       doRemoveNum.value++;
       reBroke();
       return;
@@ -488,7 +506,7 @@ const useGame = () => {
    */
   const reBroke = () => {
     setTimeout(() => {
-      goldenFinger();
+      doBroke();
     }, reBrokeTime);
   };
 
