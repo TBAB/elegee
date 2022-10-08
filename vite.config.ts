@@ -9,4 +9,5 @@ export default defineConfig({
       include: [/\.vue$/],
     }),
   ],
+  base: "./",
 });

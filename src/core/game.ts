@@ -379,7 +379,6 @@ const useGame = () => {
   const doStart = () => {
     gameStatus.value = 0;
     const { levelBlocks, randomBlocks, slotArea } = initGame();
-    console.log(levelBlocks, randomBlocks, slotArea);
     levelBlocksVal.value = levelBlocks;
     randomBlocksVal.value = randomBlocks;
     slotAreaVal.value = slotArea;
@@ -456,7 +455,7 @@ const useGame = () => {
     const ranArrNum = Math.random() > 0.5;
     const ranClickBlock = ranArrNum ? blocks : randomBlocks;
     const ranClickIdx = Math.floor(Math.random() * ranClickBlock.length);
-    console.log(ranClickBlock, ranClickBlock[ranClickIdx], ranClickIdx);
+    // console.log(ranClickBlock, ranClickBlock[ranClickIdx], ranClickIdx);
     doClickBlock(
       ranClickBlock[ranClickIdx],
       ranArrNum ? -1 : ranClickIdx,
