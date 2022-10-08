@@ -54,11 +54,11 @@ export const yangGameConfig: GameConfigType = {
   // 动物类别数
   typeNum: 8,
   // 每层块数（大致）
-  levelBlockNum: 12,
+  levelBlockNum: 16,
   // 边界收缩步长
   borderStep: 3,
   // 总层数（最小为 2）
-  levelNum: 8,
+  levelNum: 6,
   // 随机区块数（数组长度代表随机区数量，值表示每个随机区生产多少块）
   randomBlocks: [8, 8],
   // 动物数组
