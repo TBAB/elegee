@@ -175,7 +175,7 @@ onMounted(() => {
   background: url("../assets/bg-bar.png") no-repeat;
   background-size: contain;
   height: 82px;
-  width: 348px;
+  /* width: 348px; */
   margin: 10px auto;
   /* margin-right: 0px; */
   /* width: fit-content; */
@@ -237,7 +237,8 @@ onMounted(() => {
   margin-left: -38px;
 }
 .slot-block {
-  margin: 0px -4px;
+  margin: 0px 0px;
+  position: relative;
 }
 .why-enter-from,
 .why-leave-to {
@@ -250,6 +251,7 @@ onMounted(() => {
 }
 
 .why-leave-active {
-  transition: opacity 0.1s ease;
+  transition: opacity 0.3s ease;
+  bottom: 10px;
 }
 </style>
