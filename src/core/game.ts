@@ -554,6 +554,10 @@ const useGame = () => {
     @param className audio类名
    */
   const playAudio = (className: string, currentTime: number) => {
+    // @ts-ignore
+    var audio = document.getElementsByClassName(className)[0];
+    // @ts-ignore
+    audio.currentTime = currentTime;
     // 保护兼容性问题`
     try {
       // @ts-ignore
@@ -563,11 +567,27 @@ const useGame = () => {
       // @ts-ignore
       audio.seekable.start(currentTime);
       // @ts-ignore
-      audio.play();
+      audioAutoPlay(audio);
     } catch (err) {
       console.log(err);
     }
   };
+
+  function audioAutoPlay(audio: any) {
+    var play = function () {
+      audio.play();
+      document.removeEventListener("touchstart", play, false);
+    };
+    audio.play();
+    document.addEventListener(
+      "WeixinJSBridgeReady",
+      () => {
+        play();
+      },
+      false
+    );
+    document.addEventListener("touchstart", play, false);
+  }
 
   /**
    * 再来一局
