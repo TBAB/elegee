@@ -10,8 +10,33 @@
     <!-- 胜利 -->
     <div>
       <div v-if="gameStatus === 3" class="success-board">
-        <h2 class="text-white">恭喜，你赢啦！🎉</h2>
-        <h3 class="text-white" @click="reload">再来一局</h3>
+        <!-- <h2 class="text-white">恭喜，你赢啦！🎉</h2>
+        <h3 class="text-white" @click="reload">再来一局</h3> -->
+        <div class="success-animation" @click="reload">
+          <img
+            class="icon-monkey"
+            src="../assets/img-monkey.png"
+            width="184"
+            height="166"
+            alt=""
+          />
+          <img
+            class="icon-light"
+            src="../assets/bg-light.png"
+            width="372"
+            height="374"
+            alt=""
+          />
+          <div class="bg-black">
+            <img
+              src="../assets/text-congrats.png"
+              width="50"
+              height="16"
+              alt=""
+            />
+            <img src="../assets/text-desc.png" width="236" height="20" alt="" />
+          </div>
+        </div>
       </div>
     </div>
     <!-- 分层选块 -->
@@ -81,15 +106,7 @@
             :style="{
               zIndex: 100 - num,
             }"
-          >
-            <!-- {{ randomBlock[num].type }} -->
-            <!-- <img
-            v-if=""
-            class="block-img"
-            :src="inlineBgImage(randomBlock[num].type)"
-            alt=""
-          /> -->
-          </div>
+          ></div>
         </div>
       </div>
     </div>
@@ -235,8 +252,85 @@ onMounted(() => {
 }
 
 .success-board {
-  margin-top: 80px;
-  text-align: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.success-animation {
+  position: relative;
+  width: 374px;
+  height: 374px;
+}
+
+.icon-monkey {
+  position: absolute;
+  top: 60px;
+  left: 50%;
+  margin-left: -92px;
+  z-index: 998;
+}
+
+.icon-light {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 997;
+  animation: rotate 3s ease infinite;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes scale {
+  0% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(0.9);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  25% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.bg-black {
+  position: absolute;
+  top: 200px;
+  left: 50%;
+  margin-left: -125px;
+  width: 250px;
+  height: 93px;
+  background-color: black;
+  border-radius: 16px;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.bg-black img {
+  animation: scale 2s ease;
 }
 
 .disabled {
