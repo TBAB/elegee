@@ -15,7 +15,7 @@ html {
 }
 #app {
   background: url("assets/bg.png") no-repeat;
-  padding: 16px 16px 50px;
+  /* padding: 16px 16px 50px; */
   height: 100vh;
   background-size: cover;
 }

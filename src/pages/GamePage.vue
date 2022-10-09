@@ -77,15 +77,18 @@
       </div>
     </div>
     <!-- 槽位 -->
-    <div v-if="slotAreaVal.length > 0" class="slot-board">
-      <div
-        v-for="(slotBlock, index) in slotAreaVal"
-        :key="index"
-        class="block"
-        :style="{
-          backgroundImage: 'url(' + inlineBgImage(slotBlock?.type) + ')',
-        }"
-      >
+    <div class="slot-board">
+      <div v-for="(slotBlock, index) in slotAreaVal" :key="index">
+        <transition name="why">
+          <div
+            v-if="slotBlock?.status !== 2"
+            class="block slot-block"
+            :style="{
+              backgroundImage: 'url(' + inlineBgImage(slotBlock?.type) + ')',
+            }"
+          ></div>
+        </transition>
+
         <!-- {{ slotBlock?.type }} -->
       </div>
     </div>
@@ -220,5 +223,21 @@ onMounted(() => {
   background: url("../assets/icon-hidden.png") no-repeat;
   background-size: cover;
   margin-left: -38px;
+}
+.slot-block {
+  margin: 0px -4px;
+}
+.why-enter-from,
+.why-leave-to {
+  opacity: 0;
+}
+
+.why-enter-to,
+.why-leave-from {
+  opacity: 1;
+}
+
+.why-leave-active {
+  transition: opacity 0.1s ease;
 }
 </style>
