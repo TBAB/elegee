@@ -49,7 +49,7 @@ const useGame = () => {
   const boxWidthNum = 24;
   const boxHeightNum = 24;
 
-  let reBrokeTime = 200;
+  let reBrokeTime = 300;
 
   // 每个格子的宽高
   const widthUnit = 14;

@@ -18,29 +18,31 @@
     <div>
       <div v-show="gameStatus > 0" class="level-board">
         <div v-for="(block, idx) in levelBlocksVal" :key="idx">
-          <div
-            v-if="block.status === 0"
-            :ref="
-              (el) => {
-                // @ts-ignore
-                refNodes[block.id] = el;
-              }
-            "
-            class="block level-block"
-            :class="{
-              disabled: block.lowerThanBlocks.length > 0,
-            }"
-            :data-id="block.id"
-            :style="{
-              zIndex: 100 + block.level,
-              left: block.x * widthUnit + 'px',
-              top: block.y * heightUnit + 'px',
-              backgroundImage: 'url(' + inlineBgImage(block.type) + ')',
-            }"
-            @click="() => doClickBlock(block)"
-          >
-            <!-- <img class="block-img" :src="inlineBgImage(block.type)" alt="" /> -->
-          </div>
+          <transition name="icon">
+            <div
+              v-if="block.status === 0"
+              :ref="
+                (el) => {
+                  // @ts-ignore
+                  refNodes[block.id] = el;
+                }
+              "
+              class="block level-block"
+              :class="{
+                disabled: block.lowerThanBlocks.length > 0,
+              }"
+              :data-id="block.id"
+              :style="{
+                zIndex: 100 + block.level,
+                left: block.x * widthUnit + 'px',
+                top: block.y * heightUnit + 'px',
+                backgroundImage: 'url(' + inlineBgImage(block.type) + ')',
+              }"
+              @click="() => doClickBlock(block)"
+            >
+              <!-- <img class="block-img" :src="inlineBgImage(block.type)" alt="" /> -->
+            </div>
+          </transition>
         </div>
       </div>
       <!-- 随机选块 -->
@@ -50,25 +52,27 @@
           :key="index"
           class="random-area"
         >
-          <div
-            v-if="randomBlock.length > 0"
-            :ref="
-              (el) => {
-                // @ts-ignore
-                refNodes[randomBlock[0].id] = el;
-              }
-            "
-            :data-id="randomBlock[0].id"
-            class="block"
-            :style="{
-              backgroundImage:
-                'url(' + inlineBgImage(randomBlock[0].type) + ')',
-              zIndex: 100,
-            }"
-            @click="() => doClickBlock(randomBlock[0], index)"
-          >
-            <!-- {{ randomBlock[0].type }} -->
-          </div>
+          <transition name="icon">
+            <div
+              v-if="randomBlock.length > 0"
+              :ref="
+                (el) => {
+                  // @ts-ignore
+                  refNodes[randomBlock[0].id] = el;
+                }
+              "
+              :data-id="randomBlock[0].id"
+              class="block"
+              :style="{
+                backgroundImage:
+                  'url(' + inlineBgImage(randomBlock[0].type) + ')',
+                zIndex: 100,
+              }"
+              @click="() => doClickBlock(randomBlock[0], index)"
+            >
+              <!-- {{ randomBlock[0].type }} -->
+            </div>
+          </transition>
           <!-- 隐藏 -->
           <div
             v-for="num in Math.max(randomBlock.length - 1, 0)"
@@ -92,7 +96,7 @@
     <!-- 槽位 -->
     <div class="slot-board">
       <div v-for="(slotBlock, index) in slotAreaVal" :key="index">
-        <transition name="why">
+        <transition name="remove">
           <div
             v-if="slotBlock?.status !== 2"
             class="block slot-block"
@@ -240,18 +244,27 @@ onMounted(() => {
   margin: 0px 0px;
   position: relative;
 }
-.why-enter-from,
-.why-leave-to {
+.remove-enter-from,
+.remove-leave-to {
   opacity: 0;
-}
-
-.why-enter-to,
-.why-leave-from {
-  opacity: 1;
-}
-
-.why-leave-active {
-  transition: opacity 0.3s ease;
   bottom: 10px;
+}
+
+.remove-enter-to,
+.remove-leave-from {
+  opacity: 1;
+  bottom: 0px;
+}
+
+.remove-leave-active {
+  transition: all 0.3s ease;
+}
+.icon-enter-to,
+.icon-leave-from {
+  transform: scale(1.2);
+}
+
+.icon-leave-active {
+  transition: all 0.2s ease;
 }
 </style>
