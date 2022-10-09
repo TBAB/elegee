@@ -6,7 +6,7 @@
       </div>
     </div>
     <!-- 技能 -->
-    <div class="skill-board" @click="goldenFinger"></div>
+    <div ref="animSkill" class="skill-board" @click="animationStyle"></div>
     <!-- 胜利 -->
     <div>
       <div v-if="gameStatus === 3" class="success-board">
@@ -139,7 +139,7 @@
 
 <script setup lang="ts">
 import useGame from "../core/game";
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
@@ -158,6 +158,7 @@ const {
   doStart,
   goldenFinger,
   reload,
+  animationStyle,
 } = useGame();
 
 /**
@@ -166,6 +167,8 @@ const {
 const inlineBgImage = (src: string) => {
   return new URL(`../assets/${src}.png`, import.meta.url).href;
 };
+const animSkill = ref<any>(null);
+
 onMounted(() => {
   // document.addEventListener(
   //   "click",
@@ -175,7 +178,7 @@ onMounted(() => {
   //   false
   // );
 
-  doStart();
+  doStart(animSkill);
 });
 </script>
 
@@ -221,11 +224,72 @@ onMounted(() => {
 .skill-board {
   width: 80px;
   height: 80px;
+  background: url("/src/assets/icon-magic.png") no-repeat;
+  background-size: contain;
+  position: absolute;
+  right: 10px;
+  background-position: center;
+  top: 10px;
+}
+.skill-board-0 {
+  width: 80px;
+  height: 80px;
   background: url("../assets/icon-magic.png") no-repeat;
   background-size: cover;
   position: absolute;
+  background-size: contain;
+  position: absolute;
   right: 10px;
-  top: 20px;
+  background-position: center;
+  top: 10px;
+}
+.skill-board-1 {
+  width: 80px;
+  height: 80px;
+  background: url("../assets/anim-1.png") no-repeat;
+  background-size: cover;
+  position: absolute;
+  background-size: contain;
+  position: absolute;
+  right: 10px;
+  background-position: center;
+  top: 10px;
+}
+.skill-board-2 {
+  width: 80px;
+  height: 80px;
+  background: url("../assets/anim-2.png") no-repeat;
+  background-size: cover;
+  position: absolute;
+  background-size: contain;
+  position: absolute;
+  right: 10px;
+  background-position: center;
+  top: 10px;
+}
+.skill-board-3 {
+  width: 80px;
+  height: 80px;
+  background: url("../assets/anim-3.png") no-repeat;
+  background-size: cover;
+  position: absolute;
+  background-size: contain;
+  position: absolute;
+  right: 10px;
+  background-position: center;
+  top: 10px;
+}
+.skill-board-4 {
+  width: 80px;
+  height: 80px;
+  background: url("../assets/anim-4.png") no-repeat;
+  background-size: cover;
+  position: absolute;
+  background-size: contain;
+  position: absolute;
+  right: 10px;
+  background-position: center;
+  top: 10px;
 }
 .display-flex {
   display: flex;

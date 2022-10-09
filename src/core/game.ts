@@ -9,6 +9,7 @@ import { defaultGameConfig } from "./gameConfig";
 import _ from "lodash";
 import { ref } from "vue";
 
+let animSkill: any = null;
 /**
  * 异步控制
  */
@@ -390,7 +391,8 @@ const useGame = () => {
   /**
    * 开始游戏
    */
-  const doStart = () => {
+  const doStart = (refAnim: any) => {
+    animSkill = refAnim;
     gameStatus.value = 0;
     const { levelBlocks, randomBlocks, slotArea } = initGame();
     levelBlocksVal.value = levelBlocks;
@@ -589,6 +591,37 @@ const useGame = () => {
   const reload = () => {
     window.location.reload();
   };
+
+  const animationStyle = () => {
+    // @ts-ignore
+    let timer = null;
+    let count = 0;
+    let currentTime = Date.now();
+    function interval(func: any, delay: any) {
+      console.log(count, "count");
+      let interFunc = function () {
+        timer = setTimeout(interFunc, delay); // 递归调用
+        func.call(null);
+        count++;
+        // let bgUrl = `../assets/anim-${count}.png`
+        if (count >= 5) {
+          count = 4;
+        }
+        animSkill.value.className = `skill-board-${count}`;
+      };
+      timer = setTimeout(interFunc, 300); // 触发递归
+    }
+    interval(() => {
+      console.log(count, "interval count");
+      if (count >= 4) {
+        // 清除定时器
+        // @ts-ignore
+        window.clearTimeout(timer);
+        goldenFinger();
+        return;
+      }
+    }, 100);
+  };
   return {
     gameStatus,
     levelBlocksVal,
@@ -604,6 +637,7 @@ const useGame = () => {
     goldenFinger,
     reload,
     refNodes,
+    animationStyle,
   };
 };
 
