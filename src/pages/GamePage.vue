@@ -9,9 +9,9 @@
     <div class="skill-board" @click="goldenFinger"></div>
     <!-- 胜利 -->
     <div>
-      <div v-if="gameStatus === 3" style="text-align: center">
-        <h2>恭喜，你赢啦！🎉</h2>
-        <h3 @click="reload">再来一局</h3>
+      <div v-if="gameStatus === 3" class="success-board">
+        <h2 class="text-white">恭喜，你赢啦！🎉</h2>
+        <h3 class="text-white" @click="reload">再来一局</h3>
       </div>
     </div>
     <!-- 分层选块 -->
@@ -108,6 +108,14 @@
 
         <!-- {{ slotBlock?.type }} -->
       </div>
+    </div>
+    <div class="audio-board">
+      <audio controls class="audio-remove">
+        <source src="../assets/remove.mp3" type="audio/mpeg" />
+      </audio>
+      <audio controls class="audio-magic">
+        <source src="../assets/magic.mp3" type="audio/mpeg" />
+      </audio>
     </div>
   </div>
 </template>
@@ -218,6 +226,11 @@ onMounted(() => {
   background-size: 100% 100%;
 }
 
+.success-board {
+  margin-top: 80px;
+  text-align: center;
+}
+
 .disabled {
   /* background: grey;
   cursor: not-allowed;
@@ -244,6 +257,11 @@ onMounted(() => {
   margin: 0px 0px;
   position: relative;
 }
+
+.audio-board {
+  display: none;
+}
+
 .remove-enter-from,
 .remove-leave-to {
   opacity: 0;
