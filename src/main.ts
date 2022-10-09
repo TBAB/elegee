@@ -3,8 +3,6 @@ import { createApp } from "vue";
 import App from "./App.vue";
 import * as VueRouter from "vue-router";
 import routes from "./configs/routes";
-import { createPinia } from "pinia";
-import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
 // import "ant-design-vue/dist/antd.css";
 import "./style.css";
 
@@ -14,8 +12,4 @@ const router = VueRouter.createRouter({
   routes,
 });
 
-// 状态管理
-const pinia = createPinia();
-pinia.use(piniaPluginPersistedstate);
-
-createApp(App).use(router).use(pinia).mount("#app");
+createApp(App).use(router).mount("#app");
