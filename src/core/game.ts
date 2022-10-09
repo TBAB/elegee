@@ -557,7 +557,6 @@ const useGame = () => {
     var audio = document.getElementsByClassName(className)[0];
     // @ts-ignore
     // audio.currentTime = currentTime;
-    console.log(audio.duration);
     // @ts-ignore
     audio.seekable.start(currentTime);
     // @ts-ignore
