@@ -566,13 +566,27 @@ const useGame = () => {
       // @ts-ignore
       audio.seekable.start(currentTime);
       // @ts-ignore
-      audio.load();
-      // @ts-ignore
-      audio.play();
+      audioAutoPlay(audio);
     } catch (err) {
       console.log(err);
     }
   };
+
+  function audioAutoPlay(audio: any) {
+    var play = function () {
+      audio.play();
+      document.removeEventListener("touchstart", play, false);
+    };
+    audio.play();
+    document.addEventListener(
+      "WeixinJSBridgeReady",
+      () => {
+        play();
+      },
+      false
+    );
+    document.addEventListener("touchstart", play, false);
+  }
 
   /**
    * 再来一局
