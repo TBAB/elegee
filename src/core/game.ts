@@ -566,17 +566,10 @@ const useGame = () => {
       // @ts-ignore
       audio.seekable.start(currentTime);
       // @ts-ignore
+      audio.load();
+      // @ts-ignore
       audio.play();
     } catch (err) {
-      // weixin
-      document.addEventListener(
-        "WeixinJSBridgeReady",
-        () => {
-          // @ts-ignore
-          audio.play();
-        },
-        false
-      );
       console.log(err);
     }
   };
