@@ -553,9 +553,11 @@ const useGame = () => {
     @param className audio类名
    */
   const playAudio = (className: string, currentTime: number) => {
+    // @ts-ignore
     var audio = document.getElementsByClassName(className)[0];
+    // @ts-ignore
     audio.currentTime = currentTime;
-    // var start = audio.played.start(i);
+    // @ts-ignore
     audio.play();
   };
 
