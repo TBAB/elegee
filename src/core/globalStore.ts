@@ -12,17 +12,6 @@ export const useGlobalStore = defineStore("global", {
     gameConfig: { ...defaultGameConfig },
   }),
   getters: {},
-  // 持久化
-  persist: {
-    key: "global",
-    storage: window.localStorage,
-    beforeRestore: (context) => {
-      console.log("load globalStore data start");
-    },
-    afterRestore: (context) => {
-      console.log("load globalStore data end");
-    },
-  },
   actions: {
     setGameConfig(gameConfig: GameConfigType) {
       this.gameConfig = gameConfig;

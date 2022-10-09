@@ -10,7 +10,6 @@ import { ref } from "vue";
 
 const useGame = () => {
   const { gameConfig } = useGlobalStore();
-
   // 游戏状态：0 - 初始化, 1 - 进行中, 2 - 失败结束, 3 - 胜利
   const gameStatus = ref(0);
 
@@ -39,7 +38,7 @@ const useGame = () => {
   const boxWidthNum = 24;
   const boxHeightNum = 24;
 
-  const reBrokeTime = 120;
+  let reBrokeTime = 200;
 
   // 每个格子的宽高
   const widthUnit = 14;
@@ -52,7 +51,7 @@ const useGame = () => {
   let chessBoard: ChessBoardUnitType[][] = [];
 
   // 操作历史（存储点击的块）
-  let opHistory: BlockType[] = [];
+  // let opHistory: BlockType[] = [];
 
   // region 技能相关
 
@@ -320,7 +319,7 @@ const useGame = () => {
       );
     } else {
       // 非随机区才可撤回
-      opHistory.push(block);
+      // opHistory.push(block);
       // 移除覆盖关系
       block.higherThanBlocks.forEach((higherThanBlock) => {
         _.remove(higherThanBlock.lowerThanBlocks, (lowerThanBlock) => {
@@ -357,20 +356,22 @@ const useGame = () => {
         // 已消除块数 +1
         clearBlockNum.value++;
         // 清除操作记录，防止撤回
-        opHistory = [];
+        // opHistory = [];
         doRemoveNum.value = 0;
         return;
       }
       newSlotAreaVal[tempSlotNum++] = slotBlock;
     });
-    slotAreaVal.value = newSlotAreaVal;
-    currSlotNum.value = tempSlotNum;
+    setTimeout(() => {
+      slotAreaVal.value = newSlotAreaVal;
+      currSlotNum.value = tempSlotNum;
+    }, reBrokeTime - 100);
     // 游戏结束
     if (tempSlotNum >= gameConfig.slotNum) {
       gameStatus.value = 2;
       setTimeout(() => {
-        alert("马失前蹄，请重新来过");
-      }, 1000);
+        alert("马失前蹄，请重新来过"), reload();
+      }, 500);
     }
     if (clearBlockNum.value >= totalBlockNum.value) {
       gameStatus.value = 3;
@@ -402,6 +403,8 @@ const useGame = () => {
       return;
     }
     broked = !broked;
+    // 加速
+    reBrokeTime = 50;
     // 开始爆破
     doBroke();
   };
@@ -555,7 +558,7 @@ const useGame = () => {
     widthUnit,
     heightUnit,
     currSlotNum,
-    opHistory,
+    // opHistory,
     totalBlockNum,
     clearBlockNum,
     isHolyLight,
