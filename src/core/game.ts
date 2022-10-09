@@ -7,10 +7,18 @@ import { useGlobalStore } from "./globalStore";
 // @ts-ignore
 import _ from "lodash";
 import { ref } from "vue";
-let sleep = (time) =>
-  new Promise((resolve) => {
+/**
+ * 异步控制
+ */
+let sleep = (time: number) => {
+  return new Promise((resolve) => {
     setTimeout(resolve, time);
   });
+};
+
+/**
+ * 游戏初始化
+ */
 const useGame = () => {
   const { gameConfig } = useGlobalStore();
   // 游戏状态：0 - 初始化, 1 - 进行中, 2 - 失败结束, 3 - 胜利
@@ -57,10 +65,6 @@ const useGame = () => {
 
   // 操作历史（存储点击的块）
   // let opHistory: BlockType[] = [];
-
-  // region 技能相关
-
-  // endregion
 
   /**
    * 初始化指定大小的棋盘
@@ -301,10 +305,7 @@ const useGame = () => {
    */
   const doClickBlock = (block: BlockType, randomIdx = -1, force = false) => {
     // 已经输了 / 已经被点击 / 有上层块（且非强制），不能再点击
-    console.log(
-      refNodes.value[block.id].offsetTop,
-      refNodes.value[block.id].offsetLeft
-    );
+    // @ts-ignore
     if (
       currSlotNum.value >= gameConfig.slotNum ||
       block.status !== 0 ||
@@ -484,7 +485,7 @@ const useGame = () => {
     }
 
     // 随机点击一块
-    let ranClickBlock = [];
+    let ranClickBlock: BlockType[] = [];
     let ranClickIdx = 0;
     let ranArrNum;
     let ran = false;

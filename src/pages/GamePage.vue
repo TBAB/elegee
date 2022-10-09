@@ -156,9 +156,11 @@ onMounted(() => {
 }
 
 .random-board {
-  margin-top: 8px;
-  margin-left: 16px;
+  margin: 8px 20px 0px 20px;
   height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .random-area {
@@ -172,8 +174,8 @@ onMounted(() => {
   align-items: center;
   background: url("../assets/bg-bar.png") no-repeat;
   background-size: contain;
-  height: 80px;
-  width: 330px;
+  height: 82px;
+  width: 348px;
   margin: 10px auto;
   /* margin-right: 0px; */
   /* width: fit-content; */
@@ -200,27 +202,39 @@ onMounted(() => {
 }
 
 .block {
-  /* font-size: 28px; */
-  width: 50px;
-  height: 50px;
+  font-size: 28px;
+  width: 42px;
+  height: 45px;
+  line-height: 42px;
+  min-width: 42px;
   /* background: white; */
   text-align: center;
   vertical-align: top;
   display: inline-block;
-  background-size: cover;
+  background-size: 100% 100%;
 }
 
 .disabled {
   /* background: grey;
   cursor: not-allowed;
   border-radius: 5px; */
-  opacity: 0.5;
+  opacity: 1;
+}
+.disabled::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 42px;
+  height: 45px;
+  background-color: rgba(0, 0, 0, 0.68);
+  border-radius: 12px;
 }
 .random-disabled {
   opacity: 0.8;
   background: url("../assets/icon-hidden.png") no-repeat;
   background-size: cover;
-  margin-left: -15px;
+  margin-left: -38px;
 }
 .slot-block {
   margin: 0px -4px;
