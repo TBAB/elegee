@@ -20,9 +20,15 @@
         <div v-for="(block, idx) in levelBlocksVal" :key="idx">
           <div
             v-if="block.status === 0"
+            :ref="
+              (el) => {
+                // @ts-ignore
+                refNodes[block.id] = el;
+              }
+            "
             class="block level-block"
             :class="{
-              disabled: !isHolyLight && block.lowerThanBlocks.length > 0,
+              disabled: block.lowerThanBlocks.length > 0,
             }"
             :data-id="block.id"
             :style="{
@@ -37,42 +43,49 @@
           </div>
         </div>
       </div>
-    </div>
-    <!-- 随机选块 -->
-    <div class="random-board">
-      <div
-        v-for="(randomBlock, index) in randomBlocksVal"
-        :key="index"
-        class="random-area"
-      >
+      <!-- 随机选块 -->
+      <div class="random-board">
         <div
-          v-if="randomBlock.length > 0"
-          :data-id="randomBlock[0].id"
-          class="block"
-          :style="{
-            backgroundImage: 'url(' + inlineBgImage(randomBlock[0].type) + ')',
-            zIndex: 100,
-          }"
-          @click="() => doClickBlock(randomBlock[0], index)"
+          v-for="(randomBlock, index) in randomBlocksVal"
+          :key="index"
+          class="random-area"
         >
-          <!-- {{ randomBlock[0].type }} -->
-        </div>
-        <!-- 隐藏 -->
-        <div
-          v-for="num in Math.max(randomBlock.length - 1, 0)"
-          :key="num"
-          class="block random-disabled"
-          :style="{
-            zIndex: 100 - num,
-          }"
-        >
-          <!-- {{ randomBlock[num].type }} -->
-          <!-- <img
+          <div
+            v-if="randomBlock.length > 0"
+            :ref="
+              (el) => {
+                // @ts-ignore
+                refNodes[randomBlock[0].id] = el;
+              }
+            "
+            :data-id="randomBlock[0].id"
+            class="block"
+            :style="{
+              backgroundImage:
+                'url(' + inlineBgImage(randomBlock[0].type) + ')',
+              zIndex: 100,
+            }"
+            @click="() => doClickBlock(randomBlock[0], index)"
+          >
+            <!-- {{ randomBlock[0].type }} -->
+          </div>
+          <!-- 隐藏 -->
+          <div
+            v-for="num in Math.max(randomBlock.length - 1, 0)"
+            :key="num"
+            class="block random-disabled"
+            :style="{
+              zIndex: 100 - num,
+            }"
+          >
+            <!-- {{ randomBlock[num].type }} -->
+            <!-- <img
             v-if=""
             class="block-img"
             :src="inlineBgImage(randomBlock[num].type)"
             alt=""
           /> -->
+          </div>
         </div>
       </div>
     </div>
@@ -111,8 +124,7 @@ const {
   heightUnit,
   totalBlockNum,
   clearBlockNum,
-  isHolyLight,
-  canSeeRandom,
+  refNodes,
   doClickBlock,
   doStart,
   goldenFinger,

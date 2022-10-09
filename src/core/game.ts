@@ -7,7 +7,10 @@ import { useGlobalStore } from "./globalStore";
 // @ts-ignore
 import _ from "lodash";
 import { ref } from "vue";
-
+let sleep = (time) =>
+  new Promise((resolve) => {
+    setTimeout(resolve, time);
+  });
 const useGame = () => {
   const { gameConfig } = useGlobalStore();
   // 游戏状态：0 - 初始化, 1 - 进行中, 2 - 失败结束, 3 - 胜利
@@ -44,6 +47,8 @@ const useGame = () => {
   const widthUnit = 14;
   const heightUnit = 14;
 
+  const refNodes = ref({});
+
   //  正在执行金手指
   let broked = false;
 
@@ -54,10 +59,6 @@ const useGame = () => {
   // let opHistory: BlockType[] = [];
 
   // region 技能相关
-
-  const isHolyLight = ref(false);
-
-  const canSeeRandom = ref(false);
 
   // endregion
 
@@ -299,15 +300,18 @@ const useGame = () => {
    * @param force 强制移除
    */
   const doClickBlock = (block: BlockType, randomIdx = -1, force = false) => {
-    // 已经输了 / 已经被点击 / 有上层块（且非强制和圣光），不能再点击
+    // 已经输了 / 已经被点击 / 有上层块（且非强制），不能再点击
+    console.log(
+      refNodes.value[block.id].offsetTop,
+      refNodes.value[block.id].offsetLeft
+    );
     if (
       currSlotNum.value >= gameConfig.slotNum ||
       block.status !== 0 ||
-      (block.lowerThanBlocks.length > 0 && !force && !isHolyLight.value)
+      (block.lowerThanBlocks.length > 0 && !force)
     ) {
       return;
     }
-    isHolyLight.value = false;
     // 修改元素状态为已点击
     block.status = 1;
     // 移除当前元素
@@ -362,10 +366,10 @@ const useGame = () => {
       }
       newSlotAreaVal[tempSlotNum++] = slotBlock;
     });
-    setTimeout(() => {
+    sleep(reBrokeTime - 100).then(() => {
       slotAreaVal.value = newSlotAreaVal;
       currSlotNum.value = tempSlotNum;
-    }, reBrokeTime - 100);
+    });
     // 游戏结束
     if (tempSlotNum >= gameConfig.slotNum) {
       gameStatus.value = 2;
@@ -441,10 +445,11 @@ const useGame = () => {
         map[type]++;
       }
     });
+
     // console.log("tempSlotAreaVal", tempSlotAreaVal);
     // console.log("map", map);
     // console.log(blocks, tempSlotAreaVal);
-    // 边界
+    // 边界爆破
     if (tempSlotAreaVal?.length > gameConfig.slotNum - 2) {
       doRemove(1 + doRemoveNum.value);
       // 逐步增加爆破数量
@@ -453,8 +458,10 @@ const useGame = () => {
       return;
     }
     let composeNum = gameConfig.composeNum;
+    // 可点击模块筛选算法
     while (composeNum > 0) {
       for (let type in map) {
+        // 优先块级
         if (map[type] === composeNum - 1) {
           for (let j = 0; j < blocks.length; j++) {
             if (blocks[j]?.type === type) {
@@ -463,6 +470,7 @@ const useGame = () => {
               return;
             }
           }
+          // 次级随机块
           for (let j = 0; j < randomBlocks.length; j++) {
             if (randomBlocks[j]?.type === type) {
               doClickBlock(randomBlocks[j], j, false);
@@ -474,11 +482,20 @@ const useGame = () => {
       }
       composeNum--;
     }
-    // 槽中为空, 随机点击一块
-    const ranArrNum = Math.random() > 0.5;
-    const ranClickBlock = ranArrNum ? blocks : randomBlocks;
-    const ranClickIdx = Math.floor(Math.random() * ranClickBlock.length);
-    // console.log(ranClickBlock, ranClickBlock[ranClickIdx], ranClickIdx);
+
+    // 随机点击一块
+    let ranClickBlock = [];
+    let ranClickIdx = 0;
+    let ranArrNum;
+    let ran = false;
+    // 避免随机到已消除完毕的空数组[]
+    while (!ran) {
+      ranArrNum = Math.random() > 0.5;
+      ranClickBlock = ranArrNum ? blocks : randomBlocks;
+      ranClickIdx = Math.floor(Math.random() * ranClickBlock.length);
+      ran = ranClickBlock[ranClickIdx].status === 0;
+    }
+    // console.log(ran, ranClickBlock[ranClickIdx], ranClickIdx);
     doClickBlock(
       ranClickBlock[ranClickIdx],
       ranArrNum ? -1 : ranClickIdx,
@@ -486,33 +503,15 @@ const useGame = () => {
     );
     reBroke();
     return;
-    // 槽中为空
-    // for (let i = 0; i < blocks.length; i++) {
-    //   const block = blocks[i];
-    //   if (!typeBlockMap[block.type]) {
-    //     typeBlockMap[block.type] = [];
-    //   }
-    //   typeBlockMap[block.type].push(block);
-    //   // 有能消除的一组块
-    //   if (typeBlockMap[block.type].length >= gameConfig.composeNum) {
-    //     typeBlockMap[block.type].forEach((clickBlock) => {
-    //       doClickBlock(clickBlock, -1, false);
-    //     });
-    //     console.log("doBroke", typeBlockMap[block.type]);
-    //     break;
-    //   } else {
-    //     console.log(doBroke);
-    //   }
-    // }
   };
 
   /**
    *  持续消除
    */
   const reBroke = () => {
-    setTimeout(() => {
+    sleep(reBrokeTime).then(() => {
       doBroke();
-    }, reBrokeTime);
+    });
   };
 
   /**
@@ -520,7 +519,7 @@ const useGame = () => {
    */
   const doRemove = (num = 1) => {
     while (num > 0) {
-      // 移除第一个块
+      // 移除槽中第一个块
       const block = slotAreaVal.value[0];
       if (!block) {
         return;
@@ -558,15 +557,13 @@ const useGame = () => {
     widthUnit,
     heightUnit,
     currSlotNum,
-    // opHistory,
     totalBlockNum,
     clearBlockNum,
-    isHolyLight,
-    canSeeRandom,
     doClickBlock,
     doStart,
     goldenFinger,
     reload,
+    refNodes,
   };
 };
 
