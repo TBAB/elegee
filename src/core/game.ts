@@ -7,6 +7,7 @@ import { useGlobalStore } from "./globalStore";
 // @ts-ignore
 import _ from "lodash";
 import { ref } from "vue";
+
 /**
  * 异步控制
  */
@@ -562,31 +563,11 @@ const useGame = () => {
       // @ts-ignore
       var audio = document.getElementsByClassName(className)[0];
       // @ts-ignore
-      // audio.currentTime = currentTime;
-      // @ts-ignore
-      audio.seekable.start(currentTime);
-      // @ts-ignore
-      audioAutoPlay(audio);
+      audio.play();
     } catch (err) {
       console.log(err);
     }
   };
-
-  function audioAutoPlay(audio: any) {
-    var play = function () {
-      audio.play();
-      document.removeEventListener("touchstart", play, false);
-    };
-    audio.play();
-    document.addEventListener(
-      "WeixinJSBridgeReady",
-      () => {
-        play();
-      },
-      false
-    );
-    document.addEventListener("touchstart", play, false);
-  }
 
   /**
    * 再来一局

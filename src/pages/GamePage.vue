@@ -110,10 +110,10 @@
       </div>
     </div>
     <div class="audio-board">
-      <audio controls class="audio-remove" preload="auto">
+      <audio class="audio-remove">
         <source src="../assets/remove.mp3" type="audio/mpeg" />
       </audio>
-      <audio controls class="audio-magic">
+      <audio class="audio-magic">
         <source src="../assets/magic.mp3" type="audio/mpeg" />
       </audio>
     </div>
@@ -150,6 +150,14 @@ const inlineBgImage = (src: string) => {
   return new URL(`../assets/${src}.png`, import.meta.url).href;
 };
 onMounted(() => {
+  // document.addEventListener(
+  //   "click",
+  //   function () {
+  //     document.getElementsByClassName("audio-magic")[0].play();
+  //   },
+  //   false
+  // );
+
   doStart();
 });
 </script>
