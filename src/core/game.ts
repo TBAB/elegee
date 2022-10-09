@@ -3,7 +3,8 @@
  *
  * @author tbabzhao
  */
-import { useGlobalStore } from "./globalStore";
+import { defaultGameConfig } from "./gameConfig";
+
 // @ts-ignore
 import _ from "lodash";
 import { ref } from "vue";
@@ -21,7 +22,7 @@ let sleep = (time: number) => {
  * 游戏初始化
  */
 const useGame = () => {
-  const { gameConfig } = useGlobalStore();
+  const gameConfig = defaultGameConfig;
   // 游戏状态：0 - 初始化, 1 - 进行中, 2 - 失败结束, 3 - 胜利
   const gameStatus = ref(0);
 
