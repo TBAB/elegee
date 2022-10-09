@@ -565,6 +565,19 @@ const useGame = () => {
       var audio = document.getElementsByClassName(className)[0];
       // @ts-ignore
       audio.play();
+      if (/iPhone/i.test(navigator.userAgent)) {
+        //监听客户端抛出事件"WeixinJSBridgeReady"
+        if (document.addEventListener) {
+          document.addEventListener(
+            "WeixinJSBridgeReady",
+            function () {
+              // @ts-ignore
+              audio.play();
+            },
+            false
+          );
+        }
+      }
     } catch (err) {
       console.log(err);
     }
