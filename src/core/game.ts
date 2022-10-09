@@ -557,6 +557,15 @@ const useGame = () => {
     var audio = document.getElementsByClassName(className)[0];
     // @ts-ignore
     audio.currentTime = currentTime;
+    // weixin
+    document.addEventListener(
+      "WeixinJSBridgeReady",
+      () => {
+        // @ts-ignore
+        audio.play();
+      },
+      false
+    );
     // @ts-ignore
     audio.play();
   };
