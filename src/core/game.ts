@@ -553,14 +553,19 @@ const useGame = () => {
     @param className audio类名
    */
   const playAudio = (className: string, currentTime: number) => {
-    // @ts-ignore
-    var audio = document.getElementsByClassName(className)[0];
-    // @ts-ignore
-    // audio.currentTime = currentTime;
-    // @ts-ignore
-    audio.seekable.start(currentTime);
-    // @ts-ignore
-    audio.play();
+    // 保护兼容性问题`
+    try {
+      // @ts-ignore
+      var audio = document.getElementsByClassName(className)[0];
+      // @ts-ignore
+      // audio.currentTime = currentTime;
+      // @ts-ignore
+      audio.seekable.start(currentTime);
+      // @ts-ignore
+      audio.play();
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   /**
