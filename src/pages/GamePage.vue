@@ -110,7 +110,7 @@
       </div>
     </div>
     <div class="audio-board">
-      <audio controls class="audio-remove">
+      <audio controls class="audio-remove" preload="auto">
         <source src="../assets/remove.mp3" type="audio/mpeg" />
       </audio>
       <audio controls class="audio-magic">

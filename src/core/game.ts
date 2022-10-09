@@ -356,7 +356,7 @@ const useGame = () => {
     tempSlotAreaVal.forEach((slotBlock) => {
       // 成功消除（不添加到新数组中）
       if (map[slotBlock.type] >= gameConfig.composeNum) {
-        playAudio("audio-remove", 0.067);
+        playAudio("audio-remove", 0.13);
         // 块状态改为已消除
         slotBlock.status = 2;
         // 已消除块数 +1
@@ -411,7 +411,7 @@ const useGame = () => {
     broked = !broked;
     // 加速
     reBrokeTime = 50;
-    playAudio("audio-magic", 0.4);
+    playAudio("audio-magic", 0.5);
     // 开始爆破
     sleep(200).then(() => {
       doBroke();
@@ -556,7 +556,10 @@ const useGame = () => {
     // @ts-ignore
     var audio = document.getElementsByClassName(className)[0];
     // @ts-ignore
-    audio.currentTime = currentTime;
+    // audio.currentTime = currentTime;
+    console.log(audio.duration);
+    // @ts-ignore
+    audio.seekable.start(currentTime);
     // @ts-ignore
     audio.play();
   };
