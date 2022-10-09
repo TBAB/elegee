@@ -179,7 +179,7 @@ onMounted(() => {
   background: url("../assets/bg-bar.png") no-repeat;
   background-size: contain;
   height: 82px;
-  /* width: 348px; */
+  width: 348px;
   margin: 10px auto;
   /* margin-right: 0px; */
   /* width: fit-content; */
@@ -265,6 +265,6 @@ onMounted(() => {
 }
 
 .icon-leave-active {
-  transition: all 0.2s ease;
+  transition: all 0.1s ease;
 }
 </style>
