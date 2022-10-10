@@ -302,79 +302,84 @@ const genLevelRelation = (block: BlockType) => {
  * @param force 强制移除
  */
 const doClickBlock = (block: BlockType, randomIdx = -1, force = false) => {
-  // 已经输了 / 已经被点击 / 有上层块（且非强制），不能再点击
-  // @ts-ignore
-  if (
-    currSlotNum.value >= gameConfig.slotNum ||
-    block.status !== 0 ||
-    (block.lowerThanBlocks.length > 0 && !force)
-  ) {
-    return;
-  }
-  // 修改元素状态为已点击
-  block.status = 1;
-  // 移除当前元素
-  if (randomIdx >= 0) {
-    // 移除所点击的随机区域的第一个元素
-    randomBlocksVal.value[randomIdx] = randomBlocksVal.value[randomIdx].slice(
-      1,
-      randomBlocksVal.value[randomIdx].length
-    );
-  } else {
-    // 移除覆盖关系
-    block.higherThanBlocks.forEach((higherThanBlock) => {
-      _.remove(higherThanBlock.lowerThanBlocks, (lowerThanBlock) => {
-        return lowerThanBlock.id === block.id;
-      });
-    });
-  }
-  // 新元素加入插槽
-  let tempSlotNum = currSlotNum.value;
-  slotAreaVal.value[tempSlotNum] = block;
-  // 检查是否有可消除的
-  // block => 出现次数
-  const map: Record<string, number> = {};
-  // 去除空槽
-  const tempSlotAreaVal = slotAreaVal.value.filter((slotBlock) => !!slotBlock);
-  tempSlotAreaVal.forEach((slotBlock) => {
-    const type = slotBlock.type;
-    if (!map[type]) {
-      map[type] = 1;
-    } else {
-      map[type]++;
-    }
-  });
-  // 得到新数组
-  const newSlotAreaVal = new Array(gameConfig.slotNum).fill(null);
-  tempSlotNum = 0;
-  tempSlotAreaVal.forEach((slotBlock) => {
-    // 成功消除（不添加到新数组中）
-    if (map[slotBlock.type] >= gameConfig.composeNum) {
-      playAudio("audio-remove", 0.13);
-      // 块状态改为已消除
-      slotBlock.status = 2;
-      // 已消除块数 +1
-      clearBlockNum.value++;
-      doRemoveNum.value = 0;
+  return new Promise<void>((resove, reject) => {
+    // 已经输了 / 已经被点击 / 有上层块（且非强制），不能再点击
+    // @ts-ignore
+    if (
+      currSlotNum.value >= gameConfig.slotNum ||
+      block.status !== 0 ||
+      (block.lowerThanBlocks.length > 0 && !force)
+    ) {
       return;
     }
-    newSlotAreaVal[tempSlotNum++] = slotBlock;
+    // 修改元素状态为已点击
+    block.status = 1;
+    // 移除当前元素
+    if (randomIdx >= 0) {
+      // 移除所点击的随机区域的第一个元素
+      randomBlocksVal.value[randomIdx] = randomBlocksVal.value[randomIdx].slice(
+        1,
+        randomBlocksVal.value[randomIdx].length
+      );
+    } else {
+      // 移除覆盖关系
+      block.higherThanBlocks.forEach((higherThanBlock) => {
+        _.remove(higherThanBlock.lowerThanBlocks, (lowerThanBlock) => {
+          return lowerThanBlock.id === block.id;
+        });
+      });
+    }
+    // 新元素加入插槽
+    let tempSlotNum = currSlotNum.value;
+    slotAreaVal.value[tempSlotNum] = block;
+    // 检查是否有可消除的
+    // block => 出现次数
+    const map: Record<string, number> = {};
+    // 去除空槽
+    const tempSlotAreaVal = slotAreaVal.value.filter(
+      (slotBlock) => !!slotBlock
+    );
+    tempSlotAreaVal.forEach((slotBlock) => {
+      const type = slotBlock.type;
+      if (!map[type]) {
+        map[type] = 1;
+      } else {
+        map[type]++;
+      }
+    });
+    // 得到新数组
+    const newSlotAreaVal = new Array(gameConfig.slotNum).fill(null);
+    tempSlotNum = 0;
+    tempSlotAreaVal.forEach((slotBlock) => {
+      // 成功消除（不添加到新数组中）
+      if (map[slotBlock.type] >= gameConfig.composeNum) {
+        playAudio("audio-remove", 0.13);
+        // 块状态改为已消除
+        slotBlock.status = 2;
+        // 已消除块数 +1
+        clearBlockNum.value++;
+        doRemoveNum.value = 0;
+        return;
+      }
+      newSlotAreaVal[tempSlotNum++] = slotBlock;
+    });
+    sleep(reBrokeTime - 100).then(() => {
+      slotAreaVal.value = newSlotAreaVal;
+      currSlotNum.value = tempSlotNum;
+      // 游戏结束
+      if (tempSlotNum >= gameConfig.slotNum) {
+        gameStatus.value = 2;
+        setTimeout(() => {
+          alert("马失前蹄，请重新来过"), reload();
+        }, 500);
+      }
+      if (clearBlockNum.value >= totalBlockNum.value) {
+        gameStatus.value = 3;
+        broked = !broked;
+      }
+      resove();
+    });
   });
-  sleep(reBrokeTime - 100).then(() => {
-    slotAreaVal.value = newSlotAreaVal;
-    currSlotNum.value = tempSlotNum;
-  });
-  // 游戏结束
-  if (tempSlotNum >= gameConfig.slotNum) {
-    gameStatus.value = 2;
-    setTimeout(() => {
-      alert("马失前蹄，请重新来过"), reload();
-    }, 500);
-  }
-  if (clearBlockNum.value >= totalBlockNum.value) {
-    gameStatus.value = 3;
-    broked = !broked;
-  }
 };
 
 /**
@@ -410,7 +415,7 @@ const goldenFinger = () => {
 /**
  * 消除
  */
-const doBroke = () => {
+const doBroke = async () => {
   // 非可游戏状态，中断
   if (gameStatus.value !== 1) {
     return;
@@ -455,7 +460,7 @@ const doBroke = () => {
       if (map[type] === composeNum - 1) {
         for (let j = 0; j < blocks.length; j++) {
           if (blocks[j]?.type === type) {
-            doClickBlock(blocks[j], -1, false);
+            await doClickBlock(blocks[j], -1, false);
             reBroke();
             return;
           }
@@ -463,7 +468,7 @@ const doBroke = () => {
         // 次级随机块
         for (let j = 0; j < randomBlocks.length; j++) {
           if (randomBlocks[j]?.type === type) {
-            doClickBlock(randomBlocks[j], j, false);
+            await doClickBlock(randomBlocks[j], j, false);
             reBroke();
             return;
           }
@@ -486,7 +491,11 @@ const doBroke = () => {
     ran = ranClickBlock[ranClickIdx].status === 0;
   }
   // console.log(ran, ranClickBlock[ranClickIdx], ranClickIdx);
-  doClickBlock(ranClickBlock[ranClickIdx], ranArrNum ? -1 : ranClickIdx, false);
+  await doClickBlock(
+    ranClickBlock[ranClickIdx],
+    ranArrNum ? -1 : ranClickIdx,
+    false
+  );
   reBroke();
   return;
 };
