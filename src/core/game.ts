@@ -405,8 +405,6 @@ const useGame = () => {
 
   /**
    * 一键通关
-   *
-   * @desc 消除一组层级块
    */
   const goldenFinger = () => {
     if (broked) {
@@ -423,9 +421,7 @@ const useGame = () => {
   };
 
   /**
-   * 一键通关
-   *
-   * @desc 消除一组层级块
+   * 消除
    */
   const doBroke = () => {
     // 非可游戏状态，中断

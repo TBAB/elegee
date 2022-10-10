@@ -1,6 +1,6 @@
 // 企鹅icon数组
 const animals = [];
-for (let i = 1; i <= 18; i++) {
+for (let i = 1; i <= 15; i++) {
   animals.push(`icon-${i}`);
 }
 export const defaultGameConfig = {
