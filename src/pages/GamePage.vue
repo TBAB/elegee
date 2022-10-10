@@ -12,7 +12,7 @@
       <div v-if="gameStatus === 3" class="success-board">
         <!-- <h2 class="text-white">恭喜，你赢啦！🎉</h2>
         <h3 class="text-white" @click="reload">再来一局</h3> -->
-        <div class="success-animation" @click="reload">
+        <div class="success-animation">
           <img
             class="icon-monkey"
             src="../assets/img-monkey.png"
@@ -36,6 +36,14 @@
             />
             <img src="../assets/text-desc.png" width="236" height="20" alt="" />
           </div>
+          <img
+            class="btn-again"
+            src="../assets/btn-again.png"
+            width="170"
+            height="48"
+            alt=""
+            @click="reload"
+          />
         </div>
       </div>
     </div>
@@ -332,6 +340,7 @@ onMounted(() => {
   position: relative;
   width: 374px;
   height: 374px;
+  overflow: visible;
 }
 
 .icon-monkey {
@@ -381,20 +390,32 @@ onMounted(() => {
   position: absolute;
   top: 200px;
   left: 50%;
-  margin-left: -125px;
-  width: 250px;
-  height: 93px;
+  margin-left: -150px;
+  width: 300px;
+  height: 103px;
   background-color: black;
   border-radius: 16px;
   z-index: 999;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-around;
+  justify-content: center;
 }
 
 .bg-black img {
   animation: scale 2s ease;
+}
+
+.bg-black img:first-of-type {
+  margin-bottom: 20px;
+}
+
+.btn-again {
+  position: absolute;
+  top: 320px;
+  left: 50%;
+  margin-left: -85px;
+  z-index: 1000;
 }
 
 .disabled {
