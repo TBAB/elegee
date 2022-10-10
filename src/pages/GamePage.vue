@@ -167,7 +167,7 @@ const {
   goldenFinger,
   reload,
   animationStyle,
-} = useGame();
+} = useGame;
 
 /**
  * 获取图片背景
@@ -178,14 +178,6 @@ const inlineBgImage = (src: string) => {
 const animSkill = ref<any>(null);
 
 onMounted(() => {
-  // document.addEventListener(
-  //   "click",
-  //   function () {
-  //     document.getElementsByClassName("audio-magic")[0].play();
-  //   },
-  //   false
-  // );
-
   doStart(animSkill);
 });
 </script>
