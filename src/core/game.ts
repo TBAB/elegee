@@ -302,7 +302,7 @@ const genLevelRelation = (block: BlockType) => {
  * @param force 强制移除
  */
 const doClickBlock = (block: BlockType, randomIdx = -1, force = false) => {
-  return new Promise<void>((resove, reject) => {
+  return new Promise<void>(async (resove, reject) => {
     // 已经输了 / 已经被点击 / 有上层块（且非强制），不能再点击
     // @ts-ignore
     if (
@@ -332,6 +332,7 @@ const doClickBlock = (block: BlockType, randomIdx = -1, force = false) => {
     // 新元素加入插槽
     let tempSlotNum = currSlotNum.value;
     slotAreaVal.value[tempSlotNum] = block;
+    await sleep(0);
     // 检查是否有可消除的
     // block => 出现次数
     const map: Record<string, number> = {};
@@ -372,10 +373,12 @@ const doClickBlock = (block: BlockType, randomIdx = -1, force = false) => {
         setTimeout(() => {
           alert("马失前蹄，请重新来过"), reload();
         }, 500);
+        return;
       }
       if (clearBlockNum.value >= totalBlockNum.value) {
         gameStatus.value = 3;
         broked = !broked;
+        return;
       }
       resove();
     });
