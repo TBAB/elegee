@@ -423,8 +423,6 @@ const doBroke = async () => {
   if (gameStatus.value !== 1) {
     return;
   }
-  // 类型，块列表映射
-  const typeBlockMap: Record<string, BlockType[]> = {};
   // 得到可点击块
   const blocks = levelBlocksVal.value.filter(
     (block) => block.status === 0 && block.lowerThanBlocks.length === 0
@@ -443,10 +441,6 @@ const doBroke = async () => {
       map[type]++;
     }
   });
-
-  // console.log("tempSlotAreaVal", tempSlotAreaVal);
-  // console.log("map", map);
-  // console.log(blocks, tempSlotAreaVal);
   // 边界爆破
   if (tempSlotAreaVal?.length > gameConfig.slotNum - 2) {
     doRemove(1 + doRemoveNum.value);
@@ -468,7 +462,7 @@ const doBroke = async () => {
             return;
           }
         }
-        // 次级随机块
+        // 次级随机
         for (let j = 0; j < randomBlocks.length; j++) {
           if (randomBlocks[j]?.type === type) {
             await doClickBlock(randomBlocks[j], j, false);
@@ -493,7 +487,6 @@ const doBroke = async () => {
     ranClickIdx = Math.floor(Math.random() * ranClickBlock.length);
     ran = ranClickBlock[ranClickIdx].status === 0;
   }
-  // console.log(ran, ranClickBlock[ranClickIdx], ranClickIdx);
   await doClickBlock(
     ranClickBlock[ranClickIdx],
     ranArrNum ? -1 : ranClickIdx,
