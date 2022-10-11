@@ -589,7 +589,7 @@ const animationStyle = () => {
       if (count >= 5) {
         count = 4;
       }
-      animSkill.value.className = `skill-board-${count}`;
+      animSkill.value.className = `skill-board-${count} skill-board `;
     };
     timer = setTimeout(interFunc, 300); // 触发递归
   }

@@ -224,72 +224,32 @@ onMounted(() => {
 .skill-board {
   width: 80px;
   height: 80px;
-  background: url("/src/assets/icon-magic.png") no-repeat;
+  background: url("/src/assets/icon-magic.png") no-repeat center;
   background-size: contain;
   position: absolute;
   right: 10px;
-  background-position: center;
+  /* background-position: center; */
   top: 10px;
 }
 .skill-board-0 {
-  width: 80px;
-  height: 80px;
-  background: url("../assets/icon-magic.png") no-repeat;
-  background-size: cover;
-  position: absolute;
+  background: url("../assets/icon-magic.png") no-repeat center;
   background-size: contain;
-  position: absolute;
-  right: 10px;
-  background-position: center;
-  top: 10px;
 }
 .skill-board-1 {
-  width: 80px;
-  height: 80px;
-  background: url("../assets/anim-1.png") no-repeat;
-  background-size: cover;
-  position: absolute;
+  background: url("../assets/anim-1.png") no-repeat center;
   background-size: contain;
-  position: absolute;
-  right: 10px;
-  background-position: center;
-  top: 10px;
 }
 .skill-board-2 {
-  width: 80px;
-  height: 80px;
-  background: url("../assets/anim-2.png") no-repeat;
-  background-size: cover;
-  position: absolute;
+  background: url("../assets/anim-2.png") no-repeat center;
   background-size: contain;
-  position: absolute;
-  right: 10px;
-  background-position: center;
-  top: 10px;
 }
 .skill-board-3 {
-  width: 80px;
-  height: 80px;
-  background: url("../assets/anim-3.png") no-repeat;
-  background-size: cover;
-  position: absolute;
+  background: url("../assets/anim-3.png") no-repeat center;
   background-size: contain;
-  position: absolute;
-  right: 10px;
-  background-position: center;
-  top: 10px;
 }
 .skill-board-4 {
-  width: 80px;
-  height: 80px;
-  background: url("../assets/anim-4.png") no-repeat;
-  background-size: cover;
-  position: absolute;
+  background: url("../assets/anim-4.png") no-repeat center;
   background-size: contain;
-  position: absolute;
-  right: 10px;
-  background-position: center;
-  top: 10px;
 }
 .display-flex {
   display: flex;
