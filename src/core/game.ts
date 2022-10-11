@@ -368,23 +368,25 @@ const doClickBlock = (block: BlockType, randomIdx = -1) => {
       }
       newSlotAreaVal[tempSlotNum++] = slotBlock;
     });
-    slotAreaVal.value = newSlotAreaVal;
-    currSlotNum.value = tempSlotNum;
-    clickWorking = false;
-    // 游戏结束
-    if (tempSlotNum >= gameConfig.slotNum) {
-      gameStatus.value = 2;
-      setTimeout(() => {
-        alert("马失前蹄，请重新来过"), reload();
-      }, 500);
-      return;
-    }
-    if (clearBlockNum.value >= totalBlockNum.value) {
-      gameStatus.value = 3;
-      broked = !broked;
-      return;
-    }
-    resove();
+    sleep(reBrokeTime - 100).then(() => {
+      slotAreaVal.value = newSlotAreaVal;
+      currSlotNum.value = tempSlotNum;
+      clickWorking = false;
+      // 游戏结束
+      if (tempSlotNum >= gameConfig.slotNum) {
+        gameStatus.value = 2;
+        setTimeout(() => {
+          alert("马失前蹄，请重新来过"), reload();
+        }, 500);
+        return;
+      }
+      if (clearBlockNum.value >= totalBlockNum.value) {
+        gameStatus.value = 3;
+        broked = !broked;
+        return;
+      }
+      resove();
+    });
   });
 };
 
