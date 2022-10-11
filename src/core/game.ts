@@ -59,6 +59,9 @@ const heightUnit = 14;
 
 const refNodes = ref({});
 
+// 消除中
+let clickWorking = false;
+
 //  正在执行金手指
 let broked = false;
 
@@ -299,19 +302,20 @@ const genLevelRelation = (block: BlockType) => {
  * 点击块事件
  * @param block
  * @param randomIdx 随机区域下标，>= 0 表示点击的是随机块
- * @param force 强制移除
  */
-const doClickBlock = (block: BlockType, randomIdx = -1, force = false) => {
+const doClickBlock = (block: BlockType, randomIdx = -1) => {
   return new Promise<void>(async (resove, reject) => {
     // 已经输了 / 已经被点击 / 有上层块（且非强制），不能再点击
     // @ts-ignore
     if (
       currSlotNum.value >= gameConfig.slotNum ||
       block.status !== 0 ||
-      (block.lowerThanBlocks.length > 0 && !force)
+      block.lowerThanBlocks.length > 0 ||
+      clickWorking
     ) {
       return;
     }
+    clickWorking = !clickWorking;
     // 修改元素状态为已点击
     block.status = 1;
     // 移除当前元素
@@ -364,24 +368,23 @@ const doClickBlock = (block: BlockType, randomIdx = -1, force = false) => {
       }
       newSlotAreaVal[tempSlotNum++] = slotBlock;
     });
-    sleep(reBrokeTime - 100).then(() => {
-      slotAreaVal.value = newSlotAreaVal;
-      currSlotNum.value = tempSlotNum;
-      // 游戏结束
-      if (tempSlotNum >= gameConfig.slotNum) {
-        gameStatus.value = 2;
-        setTimeout(() => {
-          alert("马失前蹄，请重新来过"), reload();
-        }, 500);
-        return;
-      }
-      if (clearBlockNum.value >= totalBlockNum.value) {
-        gameStatus.value = 3;
-        broked = !broked;
-        return;
-      }
-      resove();
-    });
+    slotAreaVal.value = newSlotAreaVal;
+    currSlotNum.value = tempSlotNum;
+    clickWorking = false;
+    // 游戏结束
+    if (tempSlotNum >= gameConfig.slotNum) {
+      gameStatus.value = 2;
+      setTimeout(() => {
+        alert("马失前蹄，请重新来过"), reload();
+      }, 500);
+      return;
+    }
+    if (clearBlockNum.value >= totalBlockNum.value) {
+      gameStatus.value = 3;
+      broked = !broked;
+      return;
+    }
+    resove();
   });
 };
 
@@ -457,7 +460,7 @@ const doBroke = async () => {
       if (map[type] === composeNum - 1) {
         for (let j = 0; j < blocks.length; j++) {
           if (blocks[j]?.type === type) {
-            await doClickBlock(blocks[j], -1, false);
+            await doClickBlock(blocks[j], -1);
             reBroke();
             return;
           }
@@ -465,7 +468,7 @@ const doBroke = async () => {
         // 次级随机
         for (let j = 0; j < randomBlocks.length; j++) {
           if (randomBlocks[j]?.type === type) {
-            await doClickBlock(randomBlocks[j], j, false);
+            await doClickBlock(randomBlocks[j], j);
             reBroke();
             return;
           }
@@ -487,11 +490,7 @@ const doBroke = async () => {
     ranClickIdx = Math.floor(Math.random() * ranClickBlock.length);
     ran = ranClickBlock[ranClickIdx].status === 0;
   }
-  await doClickBlock(
-    ranClickBlock[ranClickIdx],
-    ranArrNum ? -1 : ranClickIdx,
-    false
-  );
+  await doClickBlock(ranClickBlock[ranClickIdx], ranArrNum ? -1 : ranClickIdx);
   reBroke();
   return;
 };
