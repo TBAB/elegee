@@ -4,12 +4,9 @@
  * @author tbabzhao
  */
 import { defaultGameConfig } from "../config/index";
-
-// @ts-ignore
-import _ from "lodash";
+import { shuffle, remove } from "lodash";
 import { ref } from "vue";
 
-let animSkill = null;
 /**
  * 异步控制
  */
@@ -43,30 +40,24 @@ const blockData = {};
 
 // 总块数
 let totalBlockNum = ref(0);
-
 // 已消除块数
 let clearBlockNum = ref(0);
-
-// 总共划分 24 x 24 的格子，每个块占 3 x 3 的格子，生成的起始 x 和 y 坐标范围均为 0 ~ 21
+// 格子数
 const boxWidthNum = 24;
 const boxHeightNum = 24;
-
+// 间隔
 let reBrokeTime = 300;
-
 // 每个格子的宽高
 const widthUnit = 14;
 const heightUnit = 14;
-
-const refNodes = ref({});
-
 // 消除中
 let clickWorking = false;
-
 //  正在执行金手指
 let broked = false;
-
 // 保存整个 "棋盘" 的每个格子状态（下标为格子起始点横纵坐标）
 let chessBoard = [];
+// 金手指动画容器
+let animSkill = null;
 
 /**
  * 初始化指定大小的棋盘
@@ -74,7 +65,6 @@ let chessBoard = [];
  * @param height
  */
 const initChessBoard = (width, height) => {
-  chessBoard = new Array(width);
   for (let i = 0; i < width; i++) {
     chessBoard[i] = new Array(height);
     for (let j = 0; j < height; j++) {
@@ -84,9 +74,9 @@ const initChessBoard = (width, height) => {
     }
   }
 };
-
 // 初始化棋盘
 initChessBoard(boxWidthNum, boxHeightNum);
+
 /**
  * 游戏初始化
  */
@@ -96,7 +86,7 @@ const initGame = () => {
   levelBoardDom[0].style.width = widthUnit * boxWidthNum + "px";
   levelBoardDom[0].style.height = heightUnit * boxHeightNum + "px";
 
-  // 1. 规划块数
+  // 规划块数
   // 块数单位（总块数必须是该值的倍数）
   const blockNumUnit = gameConfig.composeNum * gameConfig.typeNum;
   console.log("块数单位", blockNumUnit);
@@ -121,7 +111,7 @@ const initGame = () => {
   }
   console.log("总块数", totalBlockNum.value);
 
-  // 2. 初始化块，随机生成块的内容
+  // 初始化块，随机生成块的内容
   // 保存所有块的数组
   const iconBlocks = [];
   // 需要用到的图标数组
@@ -138,7 +128,7 @@ const initGame = () => {
     iconBlocks.push(needIcons[i % gameConfig.typeNum]);
   }
   // 打乱数组
-  const randomIconBlocks = _.shuffle(iconBlocks);
+  const randomIconBlocks = shuffle(iconBlocks);
   // 初始化
   for (let i = 0; i < totalBlockNum.value; i++) {
     const newBlock = {
@@ -198,10 +188,11 @@ const initGame = () => {
       }
     }
     const nextGenBlocks = allBlocks.slice(pos, pos + nextBlockNum);
-    levelBlocks.push(...nextGenBlocks);
-    pos = pos + nextBlockNum;
     // 生成块的坐标
     genLevelBlockPos(nextGenBlocks, minX, minY, maxX, maxY);
+    levelBlocks.push(...nextGenBlocks);
+
+    pos = pos + nextBlockNum;
     leftBlockNum -= nextBlockNum;
     if (leftBlockNum <= 0) {
       break;
@@ -319,7 +310,7 @@ const doClickBlock = (block, randomIdx = -1) => {
     } else {
       // 移除覆盖关系
       block.higherThanBlocks.forEach((higherThanBlock) => {
-        _.remove(higherThanBlock.lowerThanBlocks, (lowerThanBlock) => {
+        remove(higherThanBlock.lowerThanBlocks, (lowerThanBlock) => {
           return lowerThanBlock.id === block.id;
         });
       });
@@ -475,13 +466,13 @@ const doBroke = async () => {
   let ranClickBlock = [];
   let ranClickIdx = 0;
   let ranArrNum;
-  let ran = false;
+  let working = false;
   // 避免随机到已消除完毕的空数组[]
-  while (!ran) {
+  while (!working) {
     ranArrNum = Math.random() > 0.5;
     ranClickBlock = ranArrNum ? blocks : randomBlocks;
     ranClickIdx = Math.floor(Math.random() * ranClickBlock.length);
-    ran = ranClickBlock[ranClickIdx].status === 0;
+    working = ranClickBlock[ranClickIdx].status === 0;
   }
   await doClickBlock(ranClickBlock[ranClickIdx], ranArrNum ? -1 : ranClickIdx);
   reBroke();
@@ -534,7 +525,6 @@ const playAudio = (className, currentTime) => {
   audio.currentTime = currentTime;
   // 保护兼容性问题`
   try {
-    var audio = document.getElementsByClassName(className)[0];
     audio.play();
     if (/iPhone/i.test(navigator.userAgent)) {
       //监听客户端抛出事件"WeixinJSBridgeReady"
@@ -561,17 +551,14 @@ const reload = () => {
 };
 
 const animationStyle = () => {
-  // @ts-ignore
   let timer = null;
   let count = 0;
-  let currentTime = Date.now();
   function interval(func, delay) {
     console.log(count, "count");
     let interFunc = function () {
       timer = setTimeout(interFunc, delay); // 递归调用
       func.call(null);
       count++;
-      // let bgUrl = `../assets/anim-${count}.png`
       if (count >= 5) {
         count = 4;
       }
@@ -583,13 +570,13 @@ const animationStyle = () => {
     console.log(count, "interval count");
     if (count >= 4) {
       // 清除定时器
-      // @ts-ignore
       window.clearTimeout(timer);
       goldenFinger();
       return;
     }
   }, 100);
 };
+
 export default {
   gameStatus,
   levelBlocksVal,
@@ -604,6 +591,5 @@ export default {
   doStart,
   goldenFinger,
   reload,
-  refNodes,
   animationStyle,
 };

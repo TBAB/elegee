@@ -10,8 +10,6 @@
     <!-- 胜利 -->
     <div>
       <div v-if="gameStatus === 3" class="success-board">
-        <!-- <h2 class="text-white">恭喜，你赢啦！🎉</h2>
-        <h3 class="text-white" @click="reload">再来一局</h3> -->
         <div class="success-animation">
           <img
             class="icon-monkey"
@@ -54,12 +52,6 @@
           <transition name="icon">
             <div
               v-if="block.status === 0"
-              :ref="
-                (el) => {
-                  // @ts-ignore
-                  refNodes[block.id] = el;
-                }
-              "
               class="block level-block"
               :class="{
                 disabled: block.lowerThanBlocks.length > 0,
@@ -88,12 +80,6 @@
           <transition name="icon">
             <div
               v-if="randomBlock.length > 0"
-              :ref="
-                (el) => {
-                  // @ts-ignore
-                  refNodes[randomBlock[0].id] = el;
-                }
-              "
               :data-id="randomBlock[0].id"
               class="block"
               :style="{
@@ -161,7 +147,6 @@ const {
   heightUnit,
   totalBlockNum,
   clearBlockNum,
-  refNodes,
   doClickBlock,
   doStart,
   goldenFinger,
