@@ -334,7 +334,7 @@ const doClickBlock = (block, randomIdx = -1) => {
     tempSlotAreaVal.forEach((slotBlock) => {
       // 成功消除（不添加到新数组中）
       if (map[slotBlock.type] >= gameConfig.composeNum) {
-        playAudio("audio-remove", 0.13);
+        playAudio("audio-remove", 0.06);
         // 块状态改为已消除
         slotBlock.status = 2;
         // 已消除块数 +1
