@@ -9,7 +9,7 @@ export const defaultGameConfig = {
   // 同类型消除所需块数
   composeNum: 3,
   // 图标类别数
-  typeNum: 12,
+  typeNum: 6,
   // 每层块数（大致）
   levelBlockNum: 10,
   // 边界收缩步长
