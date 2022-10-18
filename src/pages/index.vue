@@ -1,9 +1,7 @@
 <template>
   <div id="gamePage">
     <div class="display-flex">
-      <div class="flex-1 text-white">
-        块数：{{ clearBlockNum }} / {{ totalBlockNum }}
-      </div>
+      <div class="flex-1 text-white">块数：{{ clearBlockNum }} / {{ totalBlockNum }}</div>
     </div>
     <!-- 金手指 -->
     <div ref="animSkill" class="skill-board" @click="handelMagic"></div>
@@ -21,7 +19,7 @@
         </div>
       </div>
     </div>
-    <!-- 分层选块 -->
+    <!-- 层级块区域 -->
     <div>
       <div v-show="gameStatus > 0" class="level-board">
         <div v-for="(block, idx) in levelBlocksVal" :key="idx">
@@ -39,7 +37,7 @@
           </transition>
         </div>
       </div>
-      <!-- 随机选块 -->
+      <!-- 随机块区域 -->
       <div class="random-board">
         <div
           v-for="(randomBlock, index) in randomBlocksVal"
@@ -53,14 +51,7 @@
             >
             </div>
           </transition>
-          <div
-            v-for="num in Math.max(randomBlock.length - 1, 0)"
-            :key="num"
-            class="block random-disabled"
-            :style="{
-              zIndex: 100 - num,
-            }"
-          ></div>
+          <div v-for="num in Math.max(randomBlock.length - 1, 0)" :key="num" class="block random-disabled" :style="{ zIndex: 100 - num }"></div>
         </div>
       </div>
     </div>
@@ -68,13 +59,7 @@
     <div class="slot-board">
       <div v-for="(slotBlock, index) in slotAreaVal" :key="index">
         <transition name="remove">
-          <div
-            v-if="slotBlock?.status !== 2"
-            class="block slot-block"
-            :style="{
-              backgroundImage: 'url(' + inlineBgImage(slotBlock?.type) + ')',
-            }"
-          ></div>
+          <div v-if="slotBlock?.status !== 2" class="block slot-block" :style="{ backgroundImage: 'url(' + inlineBgImage(slotBlock?.type) + ')'}"></div>
         </transition>
       </div>
     </div>
@@ -93,7 +78,6 @@
 import useGame from "../service/gameSerice";
 import { onMounted } from "vue";
 import { inlineBgImage } from "../service/utils";
-
 const { gameStatus, levelBlocksVal, randomBlocksVal, slotAreaVal, widthUnit, heightUnit, totalBlockNum, clearBlockNum, doClickBlock, startGame, handelMagic, reload, animSkill} = useGame;
 // 初始化游戏
 onMounted(() => {
@@ -109,11 +93,9 @@ onMounted(() => {
   position: relative;
   margin: 80px auto 20px;
 }
-
 .level-block {
   position: absolute;
 }
-
 .random-board {
   margin: 8px 20px 0px 20px;
   height: 100px;
@@ -121,12 +103,10 @@ onMounted(() => {
   align-items: center;
   justify-content: space-between;
 }
-
 .random-area {
   display: flex;
   justify-content: flex-start;
 }
-
 .slot-board {
   display: flex;
   justify-content: center;
@@ -136,10 +116,7 @@ onMounted(() => {
   height: 82px;
   width: 348px;
   margin: 10px auto;
-  /* margin-right: 0px; */
-  /* width: fit-content; */
 }
-
 .skill-board {
   width: 80px;
   height: 80px;
@@ -147,7 +124,6 @@ onMounted(() => {
   background-size: contain;
   position: absolute;
   right: 10px;
-  /* background-position: center; */
   top: 10px;
 }
 .skill-board-0 {
@@ -182,13 +158,11 @@ onMounted(() => {
   height: 45px;
   line-height: 42px;
   min-width: 42px;
-  /* background: white; */
   text-align: center;
   vertical-align: top;
   display: inline-block;
   background-size: 100% 100%;
 }
-
 .success-board {
   position: fixed;
   top: 0;
@@ -201,14 +175,12 @@ onMounted(() => {
   justify-content: center;
   z-index: 9999;
 }
-
 .success-animation {
   position: relative;
   width: 374px;
   height: 374px;
   overflow: visible;
 }
-
 .icon-monkey {
   position: absolute;
   top: 60px;
@@ -216,7 +188,6 @@ onMounted(() => {
   margin-left: -92px;
   z-index: 998;
 }
-
 .icon-light {
   position: absolute;
   top: 0;
@@ -224,34 +195,17 @@ onMounted(() => {
   z-index: 997;
   animation: rotate 3s ease infinite;
 }
-
 @keyframes rotate {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+  0% { transform: rotate(0deg);}
+  100% { transform: rotate(360deg);}
 }
-
 @keyframes scale {
-  0% {
-    transform: scale(1);
-  }
-  25% {
-    transform: scale(0.9);
-  }
-  50% {
-    transform: scale(1.1);
-  }
-  25% {
-    transform: scale(0.9);
-  }
-  100% {
-    transform: scale(1);
-  }
+  0%  { transform: scale(1);}
+  25% { transform: scale(0.9);}
+  50% { transform: scale(1.1);}
+  25% { transform: scale(0.9);}
+  100% {transform: scale(1);}
 }
-
 .bg-black {
   position: absolute;
   top: 200px;
@@ -267,15 +221,12 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
 }
-
 .bg-black img {
   animation: scale 2s ease;
 }
-
 .bg-black img:first-of-type {
   margin-bottom: 20px;
 }
-
 .btn-again {
   position: absolute;
   top: 320px;
@@ -283,11 +234,7 @@ onMounted(() => {
   margin-left: -85px;
   z-index: 1000;
 }
-
 .disabled {
-  /* background: grey;
-  cursor: not-allowed;
-  border-radius: 5px; */
   opacity: 1;
 }
 .disabled::before {
@@ -310,23 +257,19 @@ onMounted(() => {
   margin: 0px 0px;
   position: relative;
 }
-
 .audio-board {
   display: none;
 }
-
 .remove-enter-from,
 .remove-leave-to {
   opacity: 0;
   bottom: 10px;
 }
-
 .remove-enter-to,
 .remove-leave-from {
   opacity: 1;
   bottom: 0px;
 }
-
 .remove-leave-active {
   transition: all 0.3s ease;
 }
@@ -334,7 +277,6 @@ onMounted(() => {
 .icon-leave-from {
   transform: scale(1.2);
 }
-
 .icon-leave-active {
   transition: all 0.1s ease;
 }

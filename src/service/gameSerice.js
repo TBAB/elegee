@@ -311,61 +311,58 @@ const doClickBlock = (block, randomIdx = -1) => {
     // 将点击块推入储存槽
     let tempSlotNum = currSlotNum.value;
     slotAreaVal.value[tempSlotNum] = block;
-    // 等待dom渲染更新
+    // 暂停js主线程渲染更新dom节点
     await sleep(0);
     // 检查储存槽中是否有有三连
-    // block => 出现次数
+    // 创建map记录槽中每种类型的icon和其出现的次数
     const map = {};
-    // 去除空槽
-    const tempSlotAreaVal = slotAreaVal.value.filter(
-      (slotBlock) => !!slotBlock
-    );
+    // 过滤slotAreaVal中空槽
+    const tempSlotAreaVal = slotAreaVal.value.filter((slotBlock) => !!slotBlock);
     tempSlotAreaVal.forEach((slotBlock) => {
       const type = slotBlock.type;
-      if (!map[type]) {
-        map[type] = 1;
-      } else {
-        map[type]++;
-      }
+      !map[type] ? (map[type] = 1) : map[type]++;
     });
-    // 得到新数组
+    // 创建槽位数组
     const newSlotAreaVal = new Array(gameConfig.slotNum).fill(null);
     tempSlotNum = 0;
     tempSlotAreaVal.forEach((slotBlock) => {
-      // 成功消除（不添加到新数组中）
+      // 某种icon出现次数>=composeNum，满足消除条件，执行消除（此种icon不添加到新数组中）
       if (map[slotBlock.type] >= gameConfig.composeNum) {
         playAudio("audio-remove", 0.06);
-        // 块状态改为已消除
+        // 修改块状态改为已消除
         slotBlock.status = 2;
         // 已消除块数 +1
         clearBlockNum.value++;
+        // 爆破次数归0
         doRemoveNum.value = 0;
         return;
       }
       newSlotAreaVal[tempSlotNum++] = slotBlock;
     });
+    // 等待消除动画（如果有），控制点击频率
     sleep(clickIntervalTime).then(() => {
+      // 更新储存槽与块数统计
       slotAreaVal.value = newSlotAreaVal;
       currSlotNum.value = tempSlotNum;
       clickWorking = false;
-      // 游戏结束
+      // 判断游戏状态
+      // 游戏失败
       if (tempSlotNum >= gameConfig.slotNum) {
         gameStatus.value = 2;
-        setTimeout(() => {
+        sleep(300).then(() => {
           alert("马失前蹄，请重新来过"), reload();
-        }, 500);
+        })
         return;
       }
+      // 游戏获胜
       if (clearBlockNum.value >= totalBlockNum.value) {
         gameStatus.value = 3;
-        broked = !broked;
         return;
       }
       resove();
     });
   });
 };
-
 
 /**
  * 金手指一键通关
@@ -375,29 +372,39 @@ const goldenFinger = () => {
   clickIntervalTime = 0;
   // 播放魔法音频
   playAudio("audio-magic", 0.5);
-  // 开始消除
+  // 等待动画与音频效果后开始ai消除
   sleep(200).then(() => {
-    doBroke();
+    aiBroke();
   });
 };
 
 /**
- * 消除
+ * ai消除
  */
-const doBroke = async () => {
+const aiBroke = async () => {
   // 非可游戏状态，中断
   if (gameStatus.value !== 1) {
     return;
   }
-  // 得到可点击块
-  const blocks = levelBlocksVal.value.filter(
+  // 列出储存槽中存入的块
+  const tempSlotAreaVal = slotAreaVal.value.filter((slotBlock) => !!slotBlock);
+  // 边界爆破
+  if (tempSlotAreaVal?.length > gameConfig.slotNum - 2) {
+    doRemove(1 + doRemoveNum.value);
+    // 逐步增加爆破数量
+    doRemoveNum.value++;
+    reBroke();
+    return;
+  }
+  // 列出所有可点击的层级块
+   const levelBlocks = levelBlocksVal.value.filter(
     (block) => block.status === 0 && block.lowerThanBlocks.length === 0
   );
+  // 列出所有可点击的随机块
   let randomBlocks = randomBlocksVal.value.map((randomBlock) => {
     return randomBlock[0] || [];
   });
-  // 得到已选用槽中数据
-  const tempSlotAreaVal = slotAreaVal.value.filter((slotBlock) => !!slotBlock);
+  // 创建map记录槽中每种类型的icon和其出现的次数
   const map = {};
   tempSlotAreaVal.forEach((slotBlock) => {
     const type = slotBlock.type;
@@ -407,28 +414,20 @@ const doBroke = async () => {
       map[type]++;
     }
   });
-  // 边界爆破
-  if (tempSlotAreaVal?.length > gameConfig.slotNum - 2) {
-    doRemove(1 + doRemoveNum.value);
-    // 逐步增加爆破数量
-    doRemoveNum.value++;
-    reBroke();
-    return;
-  }
   let composeNum = gameConfig.composeNum;
-  // 可点击模块筛选算法
+  // 筛选算法 composeNum默认为3
   while (composeNum > 0) {
     for (let type in map) {
-      // 优先块级
+      // 优先在层级块中选择
       if (map[type] === composeNum - 1) {
-        for (let j = 0; j < blocks.length; j++) {
-          if (blocks[j]?.type === type) {
-            await doClickBlock(blocks[j], -1);
+        for (let j = 0; j < levelBlocks.length; j++) {
+          if (levelBlocks[j]?.type === type) {
+            await doClickBlock(levelBlocks[j], -1);
             reBroke();
             return;
           }
         }
-        // 次级随机
+        // 其次在随机块中选择
         for (let j = 0; j < randomBlocks.length; j++) {
           if (randomBlocks[j]?.type === type) {
             await doClickBlock(randomBlocks[j], j);
@@ -449,7 +448,7 @@ const doBroke = async () => {
   // 避免随机到已消除完毕的空数组[]
   while (!working) {
     ranArrNum = Math.random() > 0.5;
-    ranClickBlock = ranArrNum ? blocks : randomBlocks;
+    ranClickBlock = ranArrNum ? levelBlocks : randomBlocks;
     ranClickIdx = Math.floor(Math.random() * ranClickBlock.length);
     working = ranClickBlock[ranClickIdx].status === 0;
   }
@@ -463,7 +462,7 @@ const doBroke = async () => {
  */
 const reBroke = () => {
   sleep(50).then(() => {
-    doBroke();
+    aiBroke();
   });
 };
 
@@ -530,7 +529,7 @@ const reload = () => {
 };
 
 /**
- * 金手指
+ * 触发企鹅魔法
  */
 const handelMagic = () => {
   // 防抖
