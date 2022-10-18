@@ -5,43 +5,19 @@
         块数：{{ clearBlockNum }} / {{ totalBlockNum }}
       </div>
     </div>
-    <!-- 技能 -->
-    <div ref="animSkill" class="skill-board" @click="animationStyle"></div>
+    <!-- 金手指 -->
+    <div ref="animSkill" class="skill-board" @click="handelMagic"></div>
     <!-- 胜利 -->
     <div>
       <div v-if="gameStatus === 3" class="success-board">
         <div class="success-animation">
-          <img
-            class="icon-monkey"
-            src="../assets/img-monkey.png"
-            width="184"
-            height="166"
-            alt=""
-          />
-          <img
-            class="icon-light"
-            src="../assets/bg-light.png"
-            width="372"
-            height="374"
-            alt=""
-          />
+          <img class="icon-monkey" src="../assets/img-monkey.png" width="184" height="166" alt=""/>
+          <img class="icon-light" src="../assets/bg-light.png" width="372" height="374" alt=""/>
           <div class="bg-black">
-            <img
-              src="../assets/text-congrats.png"
-              width="50"
-              height="16"
-              alt=""
-            />
+            <img src="../assets/text-congrats.png" width="50" height="16" alt="" />
             <img src="../assets/text-desc.png" width="236" height="20" alt="" />
           </div>
-          <img
-            class="btn-again"
-            src="../assets/btn-again.png"
-            width="170"
-            height="48"
-            alt=""
-            @click="reload"
-          />
+          <img class="btn-again" src="../assets/btn-again.png" width="170" height="48"  alt=""  @click="reload"/>
         </div>
       </div>
     </div>
@@ -50,13 +26,7 @@
       <div v-show="gameStatus > 0" class="level-board">
         <div v-for="(block, idx) in levelBlocksVal" :key="idx">
           <transition name="icon">
-            <div
-              v-if="block.status === 0"
-              class="block level-block"
-              :class="{
-                disabled: block.lowerThanBlocks.length > 0,
-              }"
-              :data-id="block.id"
+            <div v-if="block.status === 0" class="block level-block" :class="{ disabled: block.lowerThanBlocks.length > 0}" :data-id="block.id"
               :style="{
                 zIndex: 100 + block.level,
                 left: block.x * widthUnit + 'px',
@@ -65,7 +35,6 @@
               }"
               @click="() => doClickBlock(block)"
             >
-              <!-- <img class="block-img" :src="inlineBgImage(block.type)" alt="" /> -->
             </div>
           </transition>
         </div>
@@ -79,20 +48,11 @@
         >
           <transition name="icon">
             <div
-              v-if="randomBlock.length > 0"
-              :data-id="randomBlock[0].id"
-              class="block"
-              :style="{
-                backgroundImage:
-                  'url(' + inlineBgImage(randomBlock[0].type) + ')',
-                zIndex: 100,
-              }"
+              v-if="randomBlock.length > 0" :data-id="randomBlock[0].id" class="block" :style="{backgroundImage:'url(' + inlineBgImage(randomBlock[0].type) + ')', zIndex: 100,}"
               @click="() => doClickBlock(randomBlock[0], index)"
             >
-              <!-- {{ randomBlock[0].type }} -->
             </div>
           </transition>
-          <!-- 隐藏 -->
           <div
             v-for="num in Math.max(randomBlock.length - 1, 0)"
             :key="num"
@@ -116,8 +76,6 @@
             }"
           ></div>
         </transition>
-
-        <!-- {{ slotBlock?.type }} -->
       </div>
     </div>
     <div class="audio-board">
@@ -133,37 +91,13 @@
 
 <script setup lang="ts">
 import useGame from "../service/gameSerice";
-import { onMounted, ref } from "vue";
-import { useRouter } from "vue-router";
+import { onMounted } from "vue";
+import { inlineBgImage } from "../service/utils";
 
-const router = useRouter();
-
-const {
-  gameStatus,
-  levelBlocksVal,
-  randomBlocksVal,
-  slotAreaVal,
-  widthUnit,
-  heightUnit,
-  totalBlockNum,
-  clearBlockNum,
-  doClickBlock,
-  doStart,
-  goldenFinger,
-  reload,
-  animationStyle,
-} = useGame;
-
-/**
- * 获取图片背景
- */
-const inlineBgImage = (src: string) => {
-  return new URL(`../assets/${src}.png`, import.meta.url).href;
-};
-const animSkill = ref<any>(null);
-
+const { gameStatus, levelBlocksVal, randomBlocksVal, slotAreaVal, widthUnit, heightUnit, totalBlockNum, clearBlockNum, doClickBlock, startGame, handelMagic, reload, animSkill} = useGame;
+// 初始化游戏
 onMounted(() => {
-  doStart(animSkill);
+  startGame();
 });
 </script>
 
@@ -242,11 +176,6 @@ onMounted(() => {
 .flex-1 {
   flex: 1;
 }
-
-.text-right {
-  text-align: right;
-}
-
 .block {
   font-size: 28px;
   width: 42px;
