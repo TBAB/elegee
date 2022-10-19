@@ -1,11 +1,10 @@
 /**
  * 游戏逻辑
- *
  * @author tbabzhao
  */
 import { defaultGameConfig } from "../config/index";
 import { shuffle, remove } from "lodash";
-import { sleep } from "./utils";
+import { sleep, findType } from "./utils";
 import { ref } from "vue";
 
 // 关联dom的变量定义
@@ -46,8 +45,8 @@ const heightUnit = 14;
 let clickIntervalTime = 200;
 // 消除中标识
 let clickWorking = false;
-//  正在执行金手指
-let broked = false;
+//  正在执行金手指，持续施法中
+let channeling = false;
 
 
 /**
@@ -257,7 +256,7 @@ const genLevelRelation = (block) => {
       }
     }
   }
-  // 比最高层的块再高一层（初始为 1）
+  // 设置当前块的层级为坐标区域最高（初始为 1）
   block.level = maxLevel + 1;
 };
 
@@ -405,31 +404,40 @@ const aiBroke = async () => {
     return randomBlock[0] || [];
   });
   // 创建map记录槽中每种类型的icon和其出现的次数
-  const map = {};
+  const map = [];
+
   tempSlotAreaVal.forEach((slotBlock) => {
     const type = slotBlock.type;
-    if (!map[type]) {
-      map[type] = 1;
+    // 查到map中已有type则将对应num++，否则初始化为1
+    if (!findType(map, type)) {
+      map.push({type, num: 1});
     } else {
-      map[type]++;
+      map.forEach((icon, index) => {
+        (icon.type === type) && (icon.num++)
+      })
     }
   });
+  // 将出现次数较多的icon排在头部，优先选取
+  map.sort((a,b) => b.num - a.num)
   let composeNum = gameConfig.composeNum;
   // 筛选算法 composeNum默认为3
   while (composeNum > 0) {
-    for (let type in map) {
+    for (let i = 0; i < map.length; i++) {
+      // 选择优先级随map中同类型icon出现次数递减
       // 优先在层级块中选择
-      if (map[type] === composeNum - 1) {
+      if (map[i].num === composeNum - 1) {
         for (let j = 0; j < levelBlocks.length; j++) {
-          if (levelBlocks[j]?.type === type) {
+          if (levelBlocks[j]?.type === map[i].type) {
+            // 命中，触发该块点击
             await doClickBlock(levelBlocks[j], -1);
+            // 点击更新完毕后继续消除
             reBroke();
             return;
           }
         }
         // 其次在随机块中选择
         for (let j = 0; j < randomBlocks.length; j++) {
-          if (randomBlocks[j]?.type === type) {
+          if (randomBlocks[j]?.type === map[i].type) {
             await doClickBlock(randomBlocks[j], j);
             reBroke();
             return;
@@ -440,18 +448,22 @@ const aiBroke = async () => {
     composeNum--;
   }
 
-  // 随机点击一块
+  // 未命中高优先级选取规则，则随机从可交互区域点击一块
+  // 随机区域集合（层级块集合或随机块集合）
   let ranClickBlock = [];
+  // 目标块索引
   let ranClickIdx = 0;
+  // 随机数
   let ranArrNum;
-  let working = false;
-  // 避免随机到已消除完毕的空数组[]
-  while (!working) {
+  let stop = false;
+  // 随机从层级块区域或随机块区域找到一个可点击块
+  while (!stop) {
     ranArrNum = Math.random() > 0.5;
     ranClickBlock = ranArrNum ? levelBlocks : randomBlocks;
     ranClickIdx = Math.floor(Math.random() * ranClickBlock.length);
-    working = ranClickBlock[ranClickIdx].status === 0;
+    stop = ranClickBlock[ranClickIdx].status === 0;
   }
+  // 触发该块点击后触发持续消除
   await doClickBlock(ranClickBlock[ranClickIdx], ranArrNum ? -1 : ranClickIdx);
   reBroke();
   return;
@@ -461,6 +473,7 @@ const aiBroke = async () => {
  *  持续消除
  */
 const reBroke = () => {
+  // 停顿50毫秒，避免消除太快看不清过程
   sleep(50).then(() => {
     aiBroke();
   });
@@ -502,22 +515,12 @@ const playAudio = (className, currentTime) => {
   var audio = document.getElementsByClassName(className)[0];
   audio.currentTime = currentTime;
   // 保护兼容性问题`
-  try {
-    audio.play();
-    if (/iPhone/i.test(navigator.userAgent)) {
-      //监听客户端抛出事件"WeixinJSBridgeReady"
-      if (document.addEventListener) {
-        document.addEventListener(
-          "WeixinJSBridgeReady",
-          function () {
-            audio.play();
-          },
-          false
-        );
-      }
+  audio.play();
+  if (/iPhone/i.test(navigator.userAgent)) {
+    //监听客户端抛出事件"WeixinJSBridgeReady"
+    if (document.addEventListener) {
+      document.addEventListener("WeixinJSBridgeReady",() => audio.play(), false);
     }
-  } catch (err) {
-    console.log(err);
   }
 };
 
@@ -533,10 +536,10 @@ const reload = () => {
  */
 const handelMagic = () => {
   // 防抖
-  if (broked) {
+  if (channeling) {
     return;
   }
-  broked = !broked;
+  channeling = !channeling;
   let timer = null;
   let count = 0;
   function interval(func, delay) {
