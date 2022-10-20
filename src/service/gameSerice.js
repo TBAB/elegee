@@ -348,7 +348,8 @@ const doClickBlock = (block, randomIdx = -1) => {
       if (tempSlotNum >= gameConfig.slotNum) {
         gameStatus.value = 2;
         sleep(300).then(() => {
-          alert("马失前蹄，请重新来过"), reload();
+          alert("马失前蹄，请重新来过");
+          window.location.reload();
         })
         return;
       }
