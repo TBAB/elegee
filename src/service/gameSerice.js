@@ -32,7 +32,7 @@ const doRemoveNum = ref(0);
 // 配置参数(槽容量、同类型消除所需块数、图标类别数、每层块数、边界收缩步长、总层数、随机区块数、图标数组)
 const gameConfig = defaultGameConfig;
 // 所有块合集（包括随机块）
-const allBlocks = [];
+let allBlocks = [];
 // 棋盘（二维数组，包含每个格子状态，下标为格子起始点横纵坐标）
 let chessBoard = [];
 // 棋盘经纬划分(横24竖24)
@@ -87,7 +87,6 @@ const initGame = () => {
 
   // 计算需要的最小块数（随机块数+层级块数*层级数）
   const minBlockNum = gameConfig.levelNum * gameConfig.levelBlockNum + totalRandomBlockNum;
-
   // 补齐到 blockNumUnit 的整数倍数，以保证生成的块可被完全消除
   totalBlockNum.value = minBlockNum;
   if (totalBlockNum.value % blockNumUnit !== 0) {
@@ -387,14 +386,6 @@ const aiBroke = async () => {
   }
   // 列出储存槽中存入的块
   const tempSlotAreaVal = slotAreaVal.value.filter((slotBlock) => !!slotBlock);
-  // 边界爆破
-  if (tempSlotAreaVal?.length > gameConfig.slotNum - 2) {
-    doRemove(1 + doRemoveNum.value);
-    // 逐步增加爆破数量
-    doRemoveNum.value++;
-    reBroke();
-    return;
-  }
   // 列出所有可点击的层级块
    const levelBlocks = levelBlocksVal.value.filter(
     (block) => block.status === 0 && block.lowerThanBlocks.length === 0
@@ -406,7 +397,7 @@ const aiBroke = async () => {
   // 创建map记录槽中每种类型的icon和其出现的次数
   const map = [];
 
-  tempSlotAreaVal.forEach((slotBlock) => {
+  tempSlotAreaVal.forEach((slotBlock, index) => {
     const type = slotBlock.type;
     // 查到map中已有type则将对应num++，否则初始化为1
     if (!findType(map, type)) {
@@ -419,6 +410,14 @@ const aiBroke = async () => {
   });
   // 将出现次数较多的icon排在头部，优先选取
   map.sort((a,b) => b.num - a.num)
+ // 边界爆破(当槽中仅剩一个空位，且放入任何块都无法触发消除时，将槽头部块放回棋盘)
+ if (tempSlotAreaVal?.length >= gameConfig.slotNum - 1 && map[0].num < gameConfig.composeNum - 1) {
+    doRemove(1 + doRemoveNum.value);
+    // 逐步增加爆破数量
+    doRemoveNum.value++;
+    reBroke();
+    return;
+  }
   let composeNum = gameConfig.composeNum;
   // 筛选算法 composeNum默认为3
   while (composeNum > 0) {
@@ -528,7 +527,18 @@ const playAudio = (className, currentTime) => {
  * 再来一局
  */
 const reload = () => {
-  window.location.reload();
+  // 随机提升游戏难度
+  // 游戏icon种类随机+1，(目前有18张素材，所以最高为18)
+  Math.random() > 0.5 && (gameConfig.typeNum < 18 && gameConfig.typeNum++);
+  // 随机增加每层块数
+  Math.random() > 0.5 && (gameConfig.levelBlockNum += 2);
+  // 初始化数据
+  allBlocks = [];
+  clearBlockNum.value = 0;
+  clickIntervalTime = 200;
+  // 放开金手指禁用
+  channeling = false;
+  startGame();
 };
 
 /**

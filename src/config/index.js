@@ -15,7 +15,7 @@ export const defaultGameConfig = {
   // 边界收缩步长
   borderStep: 3,
   // 总层数
-  levelNum: 5,
+  levelNum: 4,
   // 随机区块数（数组长度代表随机区数量，值表示每个随机区生产多少块）
   randomBlocks: [8, 8],
   // 图标数组

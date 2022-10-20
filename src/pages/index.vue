@@ -93,9 +93,6 @@ onMounted(() => {
 .skill-board-2 { background: url("../assets/anim-2.png") no-repeat center; background-size: contain;}
 .skill-board-3 { background: url("../assets/anim-3.png") no-repeat center; background-size: contain;}
 .skill-board-4 { background: url("../assets/anim-4.png") no-repeat center; background-size: contain;}
-.display-flex { display: flex;}
-.text-white { color: #fff;}
-.flex-1 { flex: 1;}
 .block { font-size: 28px; width: 42px; height: 45px; line-height: 42px; min-width: 42px; text-align: center; vertical-align: top; display: inline-block; background-size: 100% 100%;}
 .success-board { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background-color: rgba(0, 0, 0, 0.8); display: flex; align-items: center; justify-content: center; z-index: 9999;}
 .success-animation { position: relative; width: 374px; height: 374px; overflow: visible;}
@@ -107,6 +104,9 @@ onMounted(() => {
 .bg-black img { animation: scale 2s ease;}
 .bg-black img:first-of-type { margin-bottom: 20px;}
 .btn-again { position: absolute; top: 320px; left: 50%; margin-left: -85px; z-index: 1000;}
+.display-flex { display: flex;}
+.text-white { color: #fff;}
+.flex-1 { flex: 1;}
 .disabled { opacity: 1;}
 .disabled::before { content: ""; position: absolute; top: 0; left: 0; width: 42px; height: 45px; background-color: rgba(0, 0, 0, 0.68); border-radius: 12px;}
 .random-disabled { opacity: 0.8; background: url("../assets/icon-hidden.png") no-repeat; background-size: cover; margin-left: -38px;}
